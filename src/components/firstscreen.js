@@ -7,7 +7,17 @@ import Select from '@material-ui/core/Select';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
-import { addValue, getApi, addDelivery, setAmountForms, setCounter, deleteAmountForm } from '../redux';
+import { 
+  addValue, 
+  getApi, 
+  addDelivery, 
+  setAmountForms, 
+  setCounter, 
+  deleteAmountForm, 
+  setSliceIndex,
+  setAllTypes,
+  isValidation
+} from '../redux';
 function mapStateToProps(state) {
   return {
     api: state.api,
@@ -16,8 +26,12 @@ function mapStateToProps(state) {
     country: state.country,
     amountForm: state.amountForm,
     counter: state.counter,
-    index: state.index,
-    tempValue: state.tempValue
+    element: state.element,
+    tempValue: state.tempValue,
+    sliceIndex: state.sliceIndex,
+    allTypes: state.allTypes,
+    idType: state.idTypem,
+    isValid: state.isValid
   }
 }
 
@@ -28,7 +42,10 @@ function mapDispatchToProps(dispatch) {
     addDelivery,
     setAmountForms,
     setCounter,
-    deleteAmountForm
+    deleteAmountForm,
+    setSliceIndex,
+    setAllTypes,
+    isValidation
   }, dispatch)
 }
 export class Firstscreen extends React.Component {
@@ -41,7 +58,8 @@ export class Firstscreen extends React.Component {
       valueCountries: '',
       valueDistrbt: '',
       deliveryTypeValue: '',
-      collectiondeliveryType: []
+      collectiondeliveryType: [],
+      isError: this.props.isValid
     }
   }
   componentDidMount() {
@@ -56,6 +74,13 @@ export class Firstscreen extends React.Component {
   }
   getKeyByValue = (object, value) => {
     return Object.keys(object).find(key => object[key] === value);
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.isValid !== prevProps.isValid) {
+      this.setState({
+        isError: this.props.isValid
+      })
+    }
   }
   changeSelect = e => {
     const getDistribList = () => {
@@ -87,6 +112,7 @@ export class Firstscreen extends React.Component {
             state.valueTypes = e.target.value;
             return collectionTypes;
           }, () => {
+            this.props.setAllTypes(this.state.valueTypes, this.props.indexes)
             getDistribList();
           }
         );
@@ -98,6 +124,7 @@ export class Firstscreen extends React.Component {
             state.valueCountries = e.target.value;
             return collectionCountries;
           }, () => {
+            this.props.setAllTypes(this.state.valueTypes, this.props.indexes, this.state.valueCountries)
             getDistribList();
           }
         );
@@ -109,6 +136,8 @@ export class Firstscreen extends React.Component {
             const collectiondeliveryType = state.collectiondeliveryType.push(e.target.value);
             state.deliveryTypeValue = e.target.value;
             return collectiondeliveryType;
+          }, () => {
+            this.props.setAllTypes(this.state.valueTypes, this.props.indexes, this.state.valueCountries, this.state.deliveryTypeValue)
           }
         );
         break;
@@ -116,17 +145,17 @@ export class Firstscreen extends React.Component {
     }
   }
   deleteForm = () => {
-    console.log(this.props.listItems)
-    this.props.deleteAmountForm(this.props.listItems);
+    this.props.deleteEl(this.props.listItems)
   }
   render() {
+    console.log(this.props)
     return (
       <>
         <div className="form_wrapper">
-          <FormControl className="form_control">
+          <FormControl className={!this.state.isError && !this.state.valueTypes ? "form_control" : "form_control error_field"}>
             <InputLabel htmlFor="resolution">Выберите тип решения</InputLabel>
             <Select
-              value={this.state.valueTypes ? this.state.valueTypes : ''}
+              value={this.state.valueTypes ? this.state.valueTypes : '' }
               onChange={this.changeSelect}
               inputProps={{
                 id: 'resolution',
@@ -140,7 +169,7 @@ export class Firstscreen extends React.Component {
               }
             </Select>
           </FormControl>
-          <FormControl className="form_control">
+          <FormControl className={!this.state.isError && !this.state.valueCountries ? "form_control" : "form_control error_field"}>
             <InputLabel htmlFor="age-simple">Выберите страну поставки</InputLabel>
             <Select
               onClose={this.getDistribList}
@@ -158,7 +187,7 @@ export class Firstscreen extends React.Component {
             </Select>
           </FormControl>
           {this.state.valueCountries && this.state.valueTypes &&
-            <FormControl className="form_control">
+            <FormControl className={!this.state.isError && !this.state.deliveryTypeValue ? "form_control" : "form_control error_field"}>
               <InputLabel htmlFor="age-simple">Выберите дистрибутора</InputLabel>
               <Select
                 value={this.state.deliveryTypeValue ? this.state.deliveryTypeValue : ''}
@@ -177,7 +206,7 @@ export class Firstscreen extends React.Component {
           }
         </div>
         <div>
-        {this.props.listItems &&
+        {this.props.listItems !== this.props.amountForm[0] &&
             <div onClick={this.deleteForm} className="form_delete flex full_width flex_end">
               <Delete />
             </div>

@@ -63,3 +63,17 @@
   opacity: 0.5;
   transition: 0.5s ease-in;
 } 
+.form_wrapper:nth-child(1) {
+  padding-bottom: 34px;
+}
+.error_field .MuiInput-underline::before {
+  border-bottom: 1px solid #ff1100;
+}
+.error__message {
+  text-align: center;
+  color: #ff1100;
+  font-family: Roboto;
+  width: 100%;
+  display: block;
+  padding-top: 20px;
+}
