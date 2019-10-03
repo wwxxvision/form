@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: center;
 }
 .flex {
   display: flex;
@@ -15,6 +16,10 @@
 .full_width {
   width: 100%;
 }
+.full_screen {
+  width: 100%;
+  height: 100%;;
+}
 .flex_end {
   justify-content: flex-end;
 }
@@ -22,58 +27,17 @@
   height: 100%;
   width: 100%;
 }
-.form_title {
-  font-family: Roboto;
-  font-size: 5vh;
-  padding-top: 200px;
-}
-.form {
-  height: auto;
-  width: 500px;
-  margin: 0 auto;
-  padding: 20px;
+.form_block {
+  width: 400px;
   box-shadow: 0 21px 40px 0 rgba(0,0,0,.19);
-}
-.form_control {
-  width: 100%;
-  margin-top: 20px!important;
-}
-.form_add {
   display: flex;
-  cursor: pointer;
+  flex-direction: column;
   align-items: center;
-  font-family: Roboto;
-  padding-top: 10px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  opacity: .6;
-  transition: 0.5s;
+  padding: 50px;
 }
-.form_add_text {
-  padding-left: 10px;
-}
-.form_add:hover {
-  opacity: 1;
-}
-.form_delete {
-  padding-top: 10px;
-}
-.form_delete svg:hover {
-  cursor: pointer;
-  opacity: 0.5;
-  transition: 0.5s ease-in;
-} 
-.form_wrapper:nth-child(1) {
-  padding-bottom: 34px;
-}
-.error_field .MuiInput-underline::before {
-  border-bottom: 1px solid #ff1100;
-}
-.error__message {
-  text-align: center;
-  color: #ff1100;
-  font-family: Roboto;
+.form_group {
   width: 100%;
-  display: block;
-  padding-top: 20px;
+}
+.field {
+  width: 100%;
 }
