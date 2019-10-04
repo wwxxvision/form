@@ -17,7 +17,8 @@ function mapStateToProps(state) {
     key: state.key,
     keyGroup: state.keyGroup,
     fieldHtml: state.fieldHtml,
-    group: state.group
+    group: state.group,
+    mainGroup: state.mainGroup
   }
 }
 function mapDispatchToProps(dispatch) {
@@ -33,16 +34,12 @@ class RenderPages extends React.Component {
   }
   _checkSubGroups = () => {
     if (this.props.apiPage.data[0].type === 'group') {
-        for (let depth in this.props.apiPage.data[0].data) {
-          if (this.props.apiPage.data[0].data[depth].type === 'group') {
-            this.props.setFieldGroup(this.props.apiPage.data[0].data[depth].data)
-            console.log(this.props.apiPage.data[0].data[depth])
-          }
+      for (let depth in this.props.apiPage.data[0].data) {
+        if (this.props.apiPage.data[0].data[depth].type === 'group') {
+          this.props.setFieldGroup(this.props.apiPage.data[0].data[depth].data)
         }
+      }
     }
-  }
-  componentDidMount() {
-    this._checkSubGroups()
   }
   render() {
     return (
@@ -50,6 +47,7 @@ class RenderPages extends React.Component {
         <div className="form_page flex_center">
           <h1 className="form__title">Регистрация проектов</h1>
           <div className="form_block">
+            {this._checkSubGroups()}
             <Group />
           </div>
         </div>

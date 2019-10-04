@@ -26,7 +26,7 @@ export function setFieldConfig(field) {
         field
     }
 }
-export function setFieldGroup(group) {
+export function setFieldGroup(group, mainGroup) {
     return {
         type: SET_FIELD_GROOP,
         group

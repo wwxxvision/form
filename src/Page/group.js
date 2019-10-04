@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
-import addIcons from '../images/addIcon.png';
 import Element from './element'
 import {
   initialApi,
@@ -31,23 +30,30 @@ class Group extends React.Component {
   constructor(props) {
     super(props);
   }
-  render() {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.fieldGroup !== nextProps.fieldGroup) {
+      this.props.setFieldGroup(nextProps.fieldGroup);
+    }
+}
+render() {
+  if (this.props.fieldGroup !== []) {
     return (
       <>
         <div className="form_groups wrapper full_width">
-          {this.props.fieldGroup.map((item) => {
-            return (
-            <div key={item} className="form_group">
-              <div className="add_group">
-                <img src={addIcons} alt="add form" className="addIcon" />
-              </div>
-            </div>
-            )
-          })}
+          {
+            this.props.fieldGroup.map((group, index) => {
+              return (
+                <div key={'group' + index}   className="form_group">
+                  <Element key={group[index].type + index}  indexGroup={index} />
+                </div>
+              )
+            })
+          }
         </div>
       </>
     )
   }
+}
 }
 export default connect(
   mapStateToProps,
