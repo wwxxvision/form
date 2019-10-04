@@ -4,11 +4,14 @@ import {
   GET_API_PAGE,
   SET_FIELD_CONFIG,
   INITIAL_DATA_OBJECT,
-  DISPATCH_FIELD_VALUE
+  DISPATCH_FIELD_VALUE,
+  RENDER_BLOCKS,
+  SIZE_GROUP,
+  SET_FIELD_GROOP
 } from './actionTypes';
 const initialState = {
   pageData: {
-    step: 2,
+    step: 1,
     class: '',
     values: []
   },
@@ -17,9 +20,11 @@ const initialState = {
     resposneServer: false
   },
   fieldConfig: [],
-  fieldGroup: {},
-  fieldValues: []
+  fieldValues: [],
+  sizeGroup: [],
+  fieldGroup: []
 }
+
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case INITIAL_PAGE:
@@ -30,19 +35,6 @@ export function reducer(state = initialState, action) {
       let apiValue = state.apiPage.data = action.setApi;
       if (state.apiPage.data) {
         apiValue.resposneServer = true;
-        const checkLayersData = (key, data, keyGroup) => {
-          if (data.type === 'group') {
-            state.fieldGroup[key] = {}; 
-            state.fieldGroup[key] = data.fields;
-            for (let keyField in data.fields) {
-              checkLayersData(keyField, data.fields[keyField], key)
-            }
-          }
-          else {
-            state.fieldGroup[keyGroup][key] = data;
-          }
-        }
-        checkLayersData(state.pageData.step, state.apiPage.data.fields,state.pageData.step)
       }
       return Object.assign({}, state, {
         apiPage: apiValue
@@ -57,24 +49,31 @@ export function reducer(state = initialState, action) {
       })
     case SET_FIELD_CONFIG:
       let fieldArrayObject
-      if (state.apiPage.data) {
-        state.apiPage.data.fields.forEach((field) => {
-          state.fieldConfig.push({
-            group: '',
-            name: state.data.fields,
-            type: '',
-            value: '',
-            required: '',
-            visible: ''
-          })
-        })
-      }
       return Object.assign({}, state, {
         fieldArrayObject
+      })
+    case RENDER_BLOCKS:
+      let tempary
+      state.fieldGroup.push(action.render);
+      return Object.assign({}, state, {
+        tempary
       })
     case INITIAL_DATA_OBJECT:
       return Object.assign({}, state, {
         pageData: action.initial
+      })
+    case SIZE_GROUP:
+      let emptySize = state.sizeGroup.push({
+        id: action.idGroup,
+        size: action.upSize
+      })
+      return Object.assign({}, state, {
+        emptySize
+      })
+    case SET_FIELD_GROOP:
+        let tempGroup = state.fieldGroup.push(action.group)
+      return Object.assign({}, state, {
+        tempGroup
       })
     default:
       return state

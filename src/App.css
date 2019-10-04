@@ -1,8 +1,12 @@
+
+.App {
+  display: flex;
+  flex-direction: column;
+}
 .flex_center {
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
 }
 .flex {
   display: flex;
@@ -26,18 +30,63 @@
 .form_page {
   height: 100%;
   width: 100%;
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
 .form_block {
-  width: 400px;
+  width: 650px;
   box-shadow: 0 21px 40px 0 rgba(0,0,0,.19);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 50px;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 .form_group {
+  width: 100%;
+  height: 50px;
   width: 100%;
 }
 .field {
   width: 100%;
+}
+.form_group:not(:first-child) {
+  margin-top: 35px;
+}
+.hidden_input {
+  display: none;
+}
+.form_text {
+  padding-bottom: 10px;
+}
+.form__title {
+  font-family: Roboto;
+  font-size: 30px;
+}
+.wrapper_loader {
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.preloader_text {
+  font-family: Roboto;
+  color: darkgray;
+}
+.wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.form_label{ 
+  font-family: Roboto;
+}
+.form_select  {
+  height: 50px;
+  font-family: Roboto;
+}
+.add_group {
+  margin-top: 20px;
 }

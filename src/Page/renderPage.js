@@ -2,48 +2,55 @@ import React from 'react';
 import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
+import Group from './group';
 import {
   initialApi,
-  setFieldGroup
+  setFieldGroup,
+  renderBlock
 } from '../redux/actions';
 function mapStateToProps(state) {
   return {
     apiPage: state.apiPage,
-    pageData: state.pageData
+    pageData: state.pageData,
+    fieldGroup: state.fieldGroup,
+    render: state.render,
+    key: state.key,
+    keyGroup: state.keyGroup,
+    fieldHtml: state.fieldHtml,
+    group: state.group
   }
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     initialApi,
-    setFieldGroup
+    setFieldGroup,
+    renderBlock
   }, dispatch)
 }
 class RenderPages extends React.Component {
   constructor(props) {
     super(props);
   }
-  renderForms = () => {
-    return (
-      Object.entries(this.props.apiPage.fields.fields).map(field => {
-        if (this.props.apiPage.fields.type === 'group') {
-          return (
-            <div key={field} className="form_group">
-              {field[1].type !== 'hidden' &&
-                <p className="form_text">{field[1].name}</p>
-              }
-              <input type={field[1].type} required={field[1].required} className="field" />
-            </div>
-          )
+  _checkSubGroups = () => {
+    if (this.props.apiPage.data[0].type === 'group') {
+        for (let depth in this.props.apiPage.data[0].data) {
+          if (this.props.apiPage.data[0].data[depth].type === 'group') {
+            this.props.setFieldGroup(this.props.apiPage.data[0].data[depth].data)
+            console.log(this.props.apiPage.data[0].data[depth])
+          }
         }
-      })
-    )
+    }
+  }
+  componentDidMount() {
+    this._checkSubGroups()
   }
   render() {
     return (
       <>
         <div className="form_page flex_center">
+          <h1 className="form__title">Регистрация проектов</h1>
           <div className="form_block">
-            {this.renderForms()}
+            <Group />
           </div>
         </div>
       </>

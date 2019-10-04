@@ -4,7 +4,9 @@ import {
     SET_FIELD_CONFIG,
     SET_FIELD_GROOP,
     DISPATCH_FIELD_VALUE,
-    INITIAL_DATA_OBJECT
+    INITIAL_DATA_OBJECT,
+    RENDER_BLOCKS,
+    SIZE_GROUP
 } from './actionTypes';
 export function initialApi(setApi) {
     return {
@@ -26,7 +28,7 @@ export function setFieldConfig(field) {
 }
 export function setFieldGroup(group) {
     return {
-        type: SET_FIELD_CONFIG,
+        type: SET_FIELD_GROOP,
         group
     }
 }
@@ -39,6 +41,18 @@ export function initalDataObject(initial) {
 export function dispatchFieldValue(fieldValue, fieldName) {
     return {
         type: DISPATCH_FIELD_VALUE,
-        fieldValue,fieldName
+        fieldValue, fieldName
+    }
+}
+export function renderBlock(render, key, keyGroup) {
+    return {
+        type: RENDER_BLOCKS,
+        render, key, keyGroup
+    }
+}
+export function upSizeGroup(upSize, idGroup) {
+    return {
+        type: RENDER_BLOCKS,
+        upSize, idGroup
     }
 }

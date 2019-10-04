@@ -34,10 +34,23 @@ class Form extends React.Component {
       .then(res => this.props.initialApi(res))
   }
   render() {
-    if (!this.props.apiPage.fields) {
+    if (!this.props.apiPage.status) {
       return (
         <>
-          <img src={preloaders} alt="preloader" className="preloader" />
+          <div className="flex wrapper_loader">
+            <img src={preloaders} alt="preloader" className="preloader" />
+            {!this.props.apiPage.error &&
+              <>
+                <p className="preloader_text">Загрузка</p>
+              </>
+            }
+            {this.props.apiPage.error &&
+              <>
+                <p className="preloader_text">Ошибка на сервере</p>
+                <p className="preloader_text">{this.props.apiPage.error}</p>
+              </>
+            }
+          </div>
         </>
       )
     }
