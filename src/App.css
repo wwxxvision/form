@@ -103,3 +103,6 @@
 .addIcon {
   margin-left: 10px;
 }
+.group__block:not(:first-child) {
+  margin-top: 20px;
+}

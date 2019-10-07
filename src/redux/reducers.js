@@ -7,11 +7,12 @@ import {
   DISPATCH_FIELD_VALUE,
   RENDER_BLOCKS,
   SIZE_GROUP,
-  SET_FIELD_GROOP
+  SET_FIELD_GROOP,
+  SET_VALUE
 } from './actionTypes';
 const initialState = {
   pageData: {
-    step: 1,
+    step: 2,
     class: '',
     values: []
   },
@@ -22,9 +23,9 @@ const initialState = {
   fieldConfig: [],
   fieldValues: [],
   sizeGroup: [],
-  fieldGroup: []
+  fieldGroup: [],
+  countForms: []
 }
-
 export function reducer(state = initialState, action) {
   switch (action.type) {
     case INITIAL_PAGE:
@@ -39,41 +40,15 @@ export function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         apiPage: apiValue
       })
-    case DISPATCH_FIELD_VALUE:
-      let fieldArray = state.fieldValues.push({
-        name: action.fieldName,
-        value: action.fieldValues
-      })
-      return Object.assign({}, state, {
-        fieldValues: fieldArray
-      })
-    case SET_FIELD_CONFIG:
-      let fieldArrayObject
-      return Object.assign({}, state, {
-        fieldArrayObject
-      })
-    case RENDER_BLOCKS:
-      let tempary
-      state.fieldGroup.push(action.render);
-      return Object.assign({}, state, {
-        tempary
-      })
-    case INITIAL_DATA_OBJECT:
-      return Object.assign({}, state, {
-        pageData: action.initial
-      })
-    case SIZE_GROUP:
-      let emptySize = state.sizeGroup.push({
-        id: action.idGroup,
-        size: action.upSize
-      })
-      return Object.assign({}, state, {
-        emptySize
-      })
     case SET_FIELD_GROOP:
-        let tempGroup = state.fieldGroup.push(action.group)
+      let countGroups = state.fieldGroup.push(action.group)
       return Object.assign({}, state, {
-        tempGroup
+        countGroups
+      })
+    case SET_VALUE:
+      let value = state.apiPage.data.data[action.indexGroup].data[action.indexElement].value = action.value;
+      return Object.assign({}, state, {
+        value
       })
     default:
       return state

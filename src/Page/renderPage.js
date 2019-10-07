@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
@@ -28,32 +28,41 @@ function mapDispatchToProps(dispatch) {
     renderBlock
   }, dispatch)
 }
-class RenderPages extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  _checkSubGroups = () => {
-    if (this.props.apiPage.data[0].type === 'group') {
-      for (let depth in this.props.apiPage.data[0].data) {
-        if (this.props.apiPage.data[0].data[depth].type === 'group') {
-          this.props.setFieldGroup(this.props.apiPage.data[0].data[depth].data)
-        }
-      }
-    }
-  }
-  render() {
-    return (
-      <>
-        <div className="form_page flex_center">
-          <h1 className="form__title">Регистрация проектов</h1>
-          <div className="form_block">
-            {this._checkSubGroups()}
-            <Group />
-          </div>
+function RenderPages(props) {
+  // useEffect(() => {
+  //   const _checkSubGroups = () => {
+  //     const store = props.apiPage.data;
+  //     store.forEach((object, i) => {
+  //       if (object.type === 'group') {
+  //         props.setFieldGroup(object.data)
+  //         setTemplateData(oldValue => [...oldValue, {
+  //           id: i,
+  //           length: counterElements.length < 1 ? setLength(object.data.length) : counterElements
+  //         }])
+  //         setIsChange(true);
+  //       }
+  //     })
+  //   }
+  //   _checkSubGroups();
+  //   return function cleanup() {
+  //     _checkSubGroups();
+  //   };
+  // }, [])
+  return (
+    <>
+      <div className="form_page flex_center">
+        <h1 className="form__title">Регистрация проектов</h1>
+        <div className="form_block">
+          {props.apiPage.data.map((item, index) => {
+            console.log(item)
+            return (
+              <Group key={index} data={item} />
+            )
+          })}
         </div>
-      </>
-    )
-  }
+      </div>
+    </>
+  )
 }
 export default connect(
   mapStateToProps,

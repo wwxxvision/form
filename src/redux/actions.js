@@ -6,7 +6,7 @@ import {
     DISPATCH_FIELD_VALUE,
     INITIAL_DATA_OBJECT,
     RENDER_BLOCKS,
-    SIZE_GROUP
+    SET_VALUE
 } from './actionTypes';
 export function initialApi(setApi) {
     return {
@@ -26,10 +26,10 @@ export function setFieldConfig(field) {
         field
     }
 }
-export function setFieldGroup(group, mainGroup) {
+export function setFieldGroup(group, isAdd ,addIndex) {
     return {
         type: SET_FIELD_GROOP,
-        group
+        group, isAdd, addIndex
     }
 }
 export function initalDataObject(initial) {
@@ -54,5 +54,11 @@ export function upSizeGroup(upSize, idGroup) {
     return {
         type: RENDER_BLOCKS,
         upSize, idGroup
+    }
+}
+export function setValue(value, indexGroup, indexElement) {
+    return {
+        type: SET_VALUE,
+        value, indexGroup, indexElement
     }
 }
