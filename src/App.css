@@ -39,7 +39,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px;
+  padding: 40px;
   margin-top: 50px;
   margin-bottom: 50px;
 }
@@ -105,4 +105,17 @@
 }
 .group__block:not(:first-child) {
   margin-top: 20px;
+}
+.dispaly_none {
+  display: none;
+}
+.title_group {
+  font-size: 16px;
+  font-family: Roboto;
+}
+.title_group {
+  margin-top: 20px;
+}
+.hidden {
+  visibility: hidden;
 }

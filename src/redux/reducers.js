@@ -12,7 +12,7 @@ import {
 } from './actionTypes';
 const initialState = {
   pageData: {
-    step: 2,
+    step: 0,
     class: '',
     values: []
   },
@@ -46,7 +46,7 @@ export function reducer(state = initialState, action) {
         countGroups
       })
     case SET_VALUE:
-      let value = state.apiPage.data.data[action.indexGroup].data[action.indexElement].value = action.value;
+      let value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
       return Object.assign({}, state, {
         value
       })

@@ -56,9 +56,9 @@ export function upSizeGroup(upSize, idGroup) {
         upSize, idGroup
     }
 }
-export function setValue(value, indexGroup, indexElement) {
+export function setValue(value, indexGroup, indexElement, typePicker) {
     return {
         type: SET_VALUE,
-        value, indexGroup, indexElement
+        value, indexGroup, indexElement, typePicker
     }
 }

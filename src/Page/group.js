@@ -103,10 +103,11 @@ function Group(props) {
   return (
     <>
       <div className="form_groups wrapper full_width">
-        <h1>{props.data.title}</h1>
+        <h2 className="title_group full_width">{props.data.title}</h2>
         {props.data.data.map((item, index) => {
+          console.log(index)
           return (
-            <Element key={index} keyGroup={props.key} data={item} />
+            <Element key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />
           )
         })}
       </div>

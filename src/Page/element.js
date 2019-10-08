@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
@@ -7,7 +7,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { Input } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 import addIcons from '../images/addIcon.png';
+import { apiUrl } from '../api';
+import Group from './group';
 import {
   initialApi,
   setFieldGroup,
@@ -18,8 +21,8 @@ function mapStateToProps(state) {
   return {
     apiPage: state.apiPage,
     pageData: state.pageData,
-    value: state.value, 
-    indexGroup: state.indexGroup, 
+    value: state.value,
+    indexGroup: state.indexGroup,
     indexElement: state.indexElement
   }
 }
@@ -75,59 +78,88 @@ function mapDispatchToProps(dispatch) {
 //   }
 // }
 function Element(props) {
-  const [data] = useState(props.data.data)
-  // return (
-  //   <>
-  //     <div className="form_group">
-  //       {/* {props.fieldGroup[props.indexGroup].map((item, index) => {
-  //         return (
-  //           <div key={index + 'element'} className="form_element">
-  //             {item.data.type !== 'hidden' &&
-  //               <p key={index + 'label'} className="form_label">{item.data.label}</p>
-  //             }
-  //             {item.data.type !== 'select' && item.data.type !== 'hidden' &&
-  //               <Input key={index + 'text'} type={item.data.type} className="full_width input_margin" />
-  //             }
-  //           </div>
-  //         )
-  //       })} */}
-  //        {props.data.type !== 'hidden' &&
-  //             <p key={index + 'label'} className="form_label">{props.data.label}</p>
-  //         }
-  //     </div>
-  //   </>
-  // )
-  const changeValue = (e) => {
-    props.setValue(e.target.value, props.keyGroupm, props.key)
+  const [data] = useState(props.data.data);
+  const dependeceClass = useState('full_width select hidden');
+  const getDependece = () => {
+    let ruleArray = [], formData = new FormData();
+    // formData.append(data.dependence[0], data.value)
+    //  formData.append(data.dependence[1], data.value)
+    // ruleArray.forEach((rule, index) => {
+    //   if (props.indexEl === index) {
+    //     formData.append(`${rule.toString()}[]`, data.value)
+    //   }
+    // })
+    // formData.append(`${rule.toString()}[]`, data.value)
+    // fetch(`${apiUrl}`, {
+    //   method: 'POST',
+    //   body: formData
+    // })
+    //   .then(res => res.json())
+    //   .then(res => console.log(res))
+    // return 1
   }
+  const changeValue = (e) => {
+    return new Promise((resolve) => {
+      props.setValue(e.target.value, props.keyGroup, props.indexEl);
+      resolve(data.value)
+    });
+  }
+  useEffect(() => {
+    props.apiPage.data.forEach(element => {
+      element.data.filter((filterEl) => {
+       if(filterEl.data.value) {
+        console.log(dependeceElement)
+           console.log('it work')
+       }
+      })
+    });
+  }, [data.value])
   switch (props.data.type) {
     case 'text': {
       return (
         <>
           <p className="form_label">{data.label}</p>
-          <Input onChange={changeValue} name={data.name} type="text" className="full_width input_margin"  />
+          <Input onChange={changeValue}
+            readOnly={data.name === 'cost' ? true : false}
+            name={data.name} type="text"
+            required={data.required ? true : false}
+            className="full_width input_margin" />
         </>
       )
     }
     case 'select': {
       return (
-        <>
-          <p className="form_label">{data}</p>
-          <select>
-            {data.options.map((item, index) => {
+        <div className={!data.dependence ? 'full_width select' : 'full_width select hidden'}>
+          <p className="form_label">{data.label}</p>
+          <Select
+            onChange={((e) => changeValue(e).then(() => getDependece()))}
+            className="full_width"
+            value={!data.dependence ? data.value : ''}
+            required={data.required ? true : false}
+          >
+            {Object.entries(data.options).map((item, index) => {
+              console.log(item)
               return (
-                <option key={index} value={index}>{item}</option>
+                <MenuItem
+                  key={index}
+                  value={item[1]}
+                >{item[1]}</MenuItem>
               )
             })}
-          </select>
-        </>
+          </Select>
+        </div>
       )
+
     }
     case 'date': {
       return (
         <>
           <p className="form_label">{data.label}</p>
-          <Input onChange={changeValue} name={data.name} type="date" className="full_width input_margin"  />
+          <Input
+            onChange={changeValue}
+            name={data.name} type="date"
+            required={data.required ? true : false}
+            className="full_width input_margin" />
         </>
       )
     }
@@ -135,18 +167,49 @@ function Element(props) {
       return (
         <>
           <p className="form_label">{data.label}</p>
-          <Input onChange={changeValue} name={data.name} type="date" className="full_width input_margin"  />
+          <Input
+            onChange={changeValue}
+            name={data.name}
+            type="date"
+            required={data.required ? true : false}
+            className="full_width input_margin" />
+        </>
+      )
+    }
+    case 'textarea': {
+      return (
+        <>
+          <p className="form_label">{data.label}</p>
+          <TextField
+            onChange={changeValue}
+            required={data.required ? true : false}
+            className="full_width"
+            multiline={true} />
+        </>
+      )
+    }
+    case 'hidden': {
+      return (
+        <div className="hidden dispaly_none">
+          <p className="form_label">{data.label}</p>
+        </div>
+      )
+    }
+    case 'group': {
+      return (
+        <>
+          <Group indexGroup={props.indexGroup} data={props.data} />
         </>
       )
     }
     default:
       return (
         <>
-        <p>
-          Unknown element
-        </p>
+          <p>
+            {`${props.data.type} is not supporting`}
+          </p>
         </>
-      )     
+      )
   }
 }
 export default connect(

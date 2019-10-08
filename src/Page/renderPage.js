@@ -56,7 +56,7 @@ function RenderPages(props) {
           {props.apiPage.data.map((item, index) => {
             console.log(item)
             return (
-              <Group key={index} data={item} />
+              <Group key={index} indexGroup={index} data={item} />
             )
           })}
         </div>
