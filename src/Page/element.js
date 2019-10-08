@@ -15,7 +15,8 @@ import {
   initialApi,
   setFieldGroup,
   renderBlock,
-  setValue
+  setValue,
+  setError
 } from '../redux/actions';
 function mapStateToProps(state) {
   return {
@@ -25,7 +26,8 @@ function mapStateToProps(state) {
     indexGroup: state.indexGroup,
     indexElement: state.indexElement,
     sendData: state.sendData,
-    typePicker: state.typePicker
+    typePicker: state.typePicker,
+    error: state.error
   }
 }
 function mapDispatchToProps(dispatch) {
@@ -33,7 +35,8 @@ function mapDispatchToProps(dispatch) {
     initialApi,
     setFieldGroup,
     renderBlock,
-    setValue
+    setValue,
+    setError
   }, dispatch)
 }
 // class Element extends React.Component {
@@ -81,57 +84,103 @@ function mapDispatchToProps(dispatch) {
 // }
 function Element(props) {
   const [data] = useState(props.data.data);
+  const [isError, setIsError] = useState(false);
+  const [typeError, setTypeError] = useState('');
   const formData = new FormData();
   // const className = data.options.length < 1 ? 'full_width select hidden' : 'full_width select';
   const getDependece = () => {
-    props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
-      if (!dataValue.data.dependence) {
-        const getKeyByValue = (obj, value) => 
-        Object.keys(obj).find(key => obj[key] === value);
-        const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
-        formData.append(`${dataValue.data.name}[]`, id)
-      }
-    })
-    fetch(`${apiUrl}`, {
-      method: 'POST',
-      body: formData
-    })
-      .then(res => res.json())
-      .then(res =>  {
-        props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
-          if (dataValue.data.dependence) {
-            let apiRes = res.fields.distributors[0].options;
-            props.setValue(apiRes, props.keyGroup, index, true);
-          }
-        })
+    if (!data.dependence) {
+      let goSend = false;
+      props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
+        if (!dataValue.data.dependence) {
+          const getKeyByValue = (obj, value) =>
+            Object.keys(obj).find(key => obj[key] === value);
+          const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
+          formData.append(`${dataValue.data.name}[]`, id)
+          dataValue.data.value ? goSend = true : goSend = false;
+        }
       })
+      if (goSend) {
+        fetch(`${apiUrl}`, {
+          method: 'POST',
+          body: formData
+        })
+          .then(res => res.json())
+          .then(res => {
+            props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
+              if (dataValue.data.dependence) {
+                let apiRes = res.fields.distributors[0].options;
+                props.setValue(apiRes, props.keyGroup, index, true);
+                goSend = false;
+              }
+            })
+          })
+      }
+    }
   }
   const changeValue = (e) => {
     return new Promise((resolve) => {
       props.setValue(e.target.value, props.keyGroup, props.indexEl);
+      // if (!e.target.value || e.target.value.length < 2) {
+      //   setIsError(true);
+      // }
+      // else {
+      //   setIsError(false);
+      // }
+      if (!e.target.value) {
+        setIsError(true);
+        setTypeError('empty_field');
+      }
+      else if (e.target.value.length < 3) {
+        setIsError(true);
+        setTypeError('small_length');
+      }
+      else {
+        setIsError(false);
+      }
       resolve(data.value)
     });
   }
+  useEffect(() => {
+    props.setError(isError)
+  },[isError]);
+  useEffect(() => {
+    if (!data.value) {
+      props.setError(true)
+    }
+  })
   switch (props.data.type) {
     case 'text': {
       return (
         <>
+          {isError && typeError === 'small_length' &&
+            <p className="errorMessage">Миниум 3 символа</p>
+          }
+          {isError && typeError === 'empty_field' &&
+            <p className="errorMessage">Поле не заполнено</p>
+          }
           <p className="form_label">{data.label}</p>
           <Input onChange={changeValue}
             readOnly={data.name === 'cost' ? true : false}
             name={data.name} type="text"
             required={data.required ? true : false}
-            className="full_width input_margin" />
+            className={!isError ? "full_width input_margin" : "full_width error input_margin"} />
         </>
       )
     }
     case 'select': {
       return (
-        <div className={data.options  == false ? 'full_width select hidden' : 'full_width select '}>
+        <div className={data.options == false ? 'full_width select hidden' : 'full_width select '}>
+          {isError && typeError === 'small_length' &&
+            <p className="errorMessage">Миниум 3 символа</p>
+          }
+          {isError && typeError === 'empty_field' &&
+            <p className="errorMessage">Поле не заполнено</p>
+          }
           <p className="form_label">{data.label}</p>
           <Select
             onChange={((e) => changeValue(e).then(() => getDependece()))}
-            className="full_width"
+            className={!isError ? "full_width" : "full_width error"}
             value={data.value}
             required={data.required ? true : false}
           >
@@ -151,36 +200,54 @@ function Element(props) {
     case 'date': {
       return (
         <>
+          {isError && typeError === 'small_length' &&
+            <p className="errorMessage">Миниум 3 символа</p>
+          }
+          {isError && typeError === 'empty_field' &&
+            <p className="errorMessage">Поле не заполнено</p>
+          }
           <p className="form_label">{data.label}</p>
           <Input
             onChange={changeValue}
             name={data.name} type="date"
             required={data.required ? true : false}
-            className="full_width input_margin" />
+            className={!isError ? "full_width input_margin" : "full_width error input_margin"} />
         </>
       )
     }
     case 'date_list': {
       return (
         <>
+          {isError && typeError === 'small_length' &&
+            <p className="errorMessage">Миниум 3 символа</p>
+          }
+          {isError && typeError === 'empty_field' &&
+            <p className="errorMessage">Поле не заполнено</p>
+          }
           <p className="form_label">{data.label}</p>
           <Input
             onChange={changeValue}
             name={data.name}
             type="date"
             required={data.required ? true : false}
-            className="full_width input_margin" />
+            className={!isError ? "full_width input_margin" : "full_width input_margin error"} />
         </>
       )
     }
     case 'textarea': {
       return (
         <>
+          {isError && typeError === 'small_length' &&
+            <p className="errorMessage">Миниум 3 символа</p>
+          }
+          {isError && typeError === 'empty_field' &&
+            <p className="errorMessage">Поле не заполнено</p>
+          }
           <p className="form_label">{data.label}</p>
           <TextField
             onChange={changeValue}
             required={data.required ? true : false}
-            className="full_width"
+            className={!isError ? "full_width input_margin" : "full_width input_margin error "}
             multiline={true} />
         </>
       )

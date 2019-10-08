@@ -119,3 +119,24 @@
 .hidden {
   visibility: hidden;
 }
+.select {
+  margin-top: 50px;
+}
+.error {
+  border-bottom: 2px solid #fc1303;
+}
+.errorMessage {
+  margin-top: 5px;
+  color: #fc1303;
+  font-size: 14px;
+  font-family: Roboto;
+}
+.next_button {
+  margin-top: 10px;
+}
+.mg_top_btns {
+  margin-top: 10px;
+}
+.left_btn_margin {
+  margin-left: 20px;
+}

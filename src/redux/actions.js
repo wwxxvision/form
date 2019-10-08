@@ -6,7 +6,9 @@ import {
     DISPATCH_FIELD_VALUE,
     INITIAL_DATA_OBJECT,
     RENDER_BLOCKS,
-    SET_VALUE
+    SET_VALUE,
+    IS_ERROR,
+    SET_PAGE
 } from './actionTypes';
 export function initialApi(setApi) {
     return {
@@ -60,5 +62,17 @@ export function setValue(value, indexGroup, indexElement, typePicker) {
     return {
         type: SET_VALUE,
         value, indexGroup, indexElement, typePicker
+    }
+}
+export function setError(error) {
+    return {
+        type: IS_ERROR,
+        error
+    }
+}
+export function setPage(page) {
+    return {
+        type: SET_PAGE,
+        page
     }
 }

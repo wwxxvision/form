@@ -3,20 +3,22 @@ import '../App.css';
 import RenderPage from './renderPage';
 import { connect } from 'react-redux'
 import preloaders from '../images/preloader.gif';
+import Button from '@material-ui/core/Button';
 import { apiUrl } from '../api';
 import { bindActionCreators } from 'redux';
 import {
-  initialApi, renderBlock
+  initialApi, renderBlock,setPage
 } from '../redux/actions';
 function mapStateToProps(state) {
   return {
     pageData: state.pageData,
-    apiPage: state.apiPage
+    apiPage: state.apiPage,
+    page: state.page
   }
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    initialApi
+    initialApi, setPage
   }, dispatch)
 }
 // class Form extends React.Component {
@@ -73,10 +75,23 @@ function Form(props) {
   }
   useEffect(() => {
     fetchData()
-      return function cleanup() {
-        fetchData();
-      };
-  },[props.pageData.step]);
+    return function cleanup() {
+      fetchData();
+    };
+  }, [props.pageData.step]);
+  const nextStep = () => {
+    if (!props.error) {
+      props.setPage(props.pageData.step + 1);
+      fetchData();
+    }
+    else {
+      console.log('error')
+    }
+  }
+  const backStep = () => {
+    props.setPage(props.pageData.step - 1);
+    fetchData();
+  }
   if (!props.apiPage.status) {
     return (
       <div>
@@ -100,6 +115,28 @@ function Form(props) {
     return (
       <section className="form_page full_screen flex_center">
         <RenderPage />
+        {props.pageData.step === 0 &&
+          <Button  onClick={nextStep} className="next_button" variant="contained">
+            Далее
+            </Button>
+        }
+        {props.pageData.step === 1 &&
+          <div className="flex mg_top_btns">
+            <Button onClick={nextStep} className="next_button" variant="contained">
+              Далее
+              </Button>
+            <div className="btn__wrapper left_btn_margin">
+              <Button onClick={backStep} className="next_button left_btn_margin" variant="contained">
+                Назад
+              </Button>
+            </div>
+          </div>
+        }
+        {props.pageData.step === 2 &&
+          <Button onClick={backStep} className="next_button" variant="contained">
+            Назад
+            </Button>
+        }
       </section>
     )
   }

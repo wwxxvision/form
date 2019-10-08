@@ -8,7 +8,9 @@ import {
   RENDER_BLOCKS,
   SIZE_GROUP,
   SET_FIELD_GROOP,
-  SET_VALUE
+  SET_VALUE,
+  IS_ERROR,
+  SET_PAGE
 } from './actionTypes';
 const initialState = {
   pageData: {
@@ -61,6 +63,15 @@ export function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         value,
         sendData
+      })
+    case IS_ERROR:
+      return Object.assign({}, state, {
+        error: action.error
+      })
+    case SET_PAGE:
+      let pageCurrent = state.pageData.step = action.page
+      return Object.assign({}, state, {
+        pageCurrent
       })
     default:
       return state
