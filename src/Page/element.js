@@ -23,7 +23,9 @@ function mapStateToProps(state) {
     pageData: state.pageData,
     value: state.value,
     indexGroup: state.indexGroup,
-    indexElement: state.indexElement
+    indexElement: state.indexElement,
+    sendData: state.sendData,
+    typePicker: state.typePicker
   }
 }
 function mapDispatchToProps(dispatch) {
@@ -79,24 +81,30 @@ function mapDispatchToProps(dispatch) {
 // }
 function Element(props) {
   const [data] = useState(props.data.data);
-  const dependeceClass = useState('full_width select hidden');
+  const formData = new FormData();
+  // const className = data.options.length < 1 ? 'full_width select hidden' : 'full_width select';
   const getDependece = () => {
-    let ruleArray = [], formData = new FormData();
-    // formData.append(data.dependence[0], data.value)
-    //  formData.append(data.dependence[1], data.value)
-    // ruleArray.forEach((rule, index) => {
-    //   if (props.indexEl === index) {
-    //     formData.append(`${rule.toString()}[]`, data.value)
-    //   }
-    // })
-    // formData.append(`${rule.toString()}[]`, data.value)
-    // fetch(`${apiUrl}`, {
-    //   method: 'POST',
-    //   body: formData
-    // })
-    //   .then(res => res.json())
-    //   .then(res => console.log(res))
-    // return 1
+    props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
+      if (!dataValue.data.dependence) {
+        const getKeyByValue = (obj, value) => 
+        Object.keys(obj).find(key => obj[key] === value);
+        const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
+        formData.append(`${dataValue.data.name}[]`, id)
+      }
+    })
+    fetch(`${apiUrl}`, {
+      method: 'POST',
+      body: formData
+    })
+      .then(res => res.json())
+      .then(res =>  {
+        props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
+          if (dataValue.data.dependence) {
+            let apiRes = res.fields.distributors[0].options;
+            props.setValue(apiRes, props.keyGroup, index, true);
+          }
+        })
+      })
   }
   const changeValue = (e) => {
     return new Promise((resolve) => {
@@ -104,16 +112,6 @@ function Element(props) {
       resolve(data.value)
     });
   }
-  useEffect(() => {
-    props.apiPage.data.forEach(element => {
-      element.data.filter((filterEl) => {
-       if(filterEl.data.value) {
-        console.log(dependeceElement)
-           console.log('it work')
-       }
-      })
-    });
-  }, [data.value])
   switch (props.data.type) {
     case 'text': {
       return (
@@ -129,16 +127,15 @@ function Element(props) {
     }
     case 'select': {
       return (
-        <div className={!data.dependence ? 'full_width select' : 'full_width select hidden'}>
+        <div className={data.options  == false ? 'full_width select hidden' : 'full_width select '}>
           <p className="form_label">{data.label}</p>
           <Select
             onChange={((e) => changeValue(e).then(() => getDependece()))}
             className="full_width"
-            value={!data.dependence ? data.value : ''}
+            value={data.value}
             required={data.required ? true : false}
           >
             {Object.entries(data.options).map((item, index) => {
-              console.log(item)
               return (
                 <MenuItem
                   key={index}

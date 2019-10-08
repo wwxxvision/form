@@ -24,7 +24,8 @@ const initialState = {
   fieldValues: [],
   sizeGroup: [],
   fieldGroup: [],
-  countForms: []
+  countForms: [],
+  sendData: ''
 }
 export function reducer(state = initialState, action) {
   switch (action.type) {
@@ -46,9 +47,20 @@ export function reducer(state = initialState, action) {
         countGroups
       })
     case SET_VALUE:
-      let value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
+      let value, sendData
+      if (!action.typePicker) {
+        value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
+        // if (action.typePicker && state.apiPage.data[action.indexGroup].data[action.indexElement].data.dependence.length > 0) {
+        //   sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.dependence[action.indexElement] = action.value;
+        // }
+        // state.apiPage.data[action.indexGroup].data[action.indexElement].data.value
+      }
+      else {
+        sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
+      }
       return Object.assign({}, state, {
-        value
+        value,
+        sendData
       })
     default:
       return state
