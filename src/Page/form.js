@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
 import RenderPage from './renderPage';
 import { connect } from 'react-redux'
@@ -7,18 +7,20 @@ import Button from '@material-ui/core/Button';
 import { apiUrl } from '../api';
 import { bindActionCreators } from 'redux';
 import {
-  initialApi, renderBlock,setPage
+  initialApi, renderBlock, setPage, setGoogleApi
 } from '../redux/actions';
 function mapStateToProps(state) {
   return {
     pageData: state.pageData,
     apiPage: state.apiPage,
-    page: state.page
+    page: state.page,
+    error: state.error,
+    google: state.google
   }
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    initialApi, setPage
+    initialApi, setPage, setGoogleApi
   }, dispatch)
 }
 // class Form extends React.Component {
@@ -66,6 +68,7 @@ function mapDispatchToProps(dispatch) {
 //   }
 // }
 function Form(props) {
+  const [isGoogleApi, setGoogleApi] = useState(false)
   const fetchData = () => {
     fetch(`${apiUrl + props.pageData.step}`, {
       method: 'GET'
@@ -73,28 +76,16 @@ function Form(props) {
       .then(res => res.json())
       .then(res => props.initialApi(res))
   }
+
   useEffect(() => {
-    fetchData()
+    fetchData();
     return function cleanup() {
       fetchData();
     };
   }, [props.pageData.step]);
-  const nextStep = () => {
-    if (!props.error) {
-      props.setPage(props.pageData.step + 1);
-      fetchData();
-    }
-    else {
-      console.log('error')
-    }
-  }
-  const backStep = () => {
-    props.setPage(props.pageData.step - 1);
-    fetchData();
-  }
   if (!props.apiPage.status) {
     return (
-      <div>
+      <div className="wrapper">
         <div className="flex wrapper_loader">
           <img src={preloaders} alt="preloader" className="preloader" />
           {!props.apiPage.error &&
@@ -113,30 +104,10 @@ function Form(props) {
   }
   else {
     return (
-      <section className="form_page full_screen flex_center">
-        <RenderPage />
-        {props.pageData.step === 0 &&
-          <Button  onClick={nextStep} className="next_button" variant="contained">
-            Далее
-            </Button>
-        }
-        {props.pageData.step === 1 &&
-          <div className="flex mg_top_btns">
-            <Button onClick={nextStep} className="next_button" variant="contained">
-              Далее
-              </Button>
-            <div className="btn__wrapper left_btn_margin">
-              <Button onClick={backStep} className="next_button left_btn_margin" variant="contained">
-                Назад
-              </Button>
-            </div>
-          </div>
-        }
-        {props.pageData.step === 2 &&
-          <Button onClick={backStep} className="next_button" variant="contained">
-            Назад
-            </Button>
-        }
+      <section className="form_page_wrapper full_screen flex_center">
+        <>
+          <RenderPage />
+        </>
       </section>
     )
   }

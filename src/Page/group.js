@@ -99,15 +99,13 @@ function Group(props) {
   //     _checkSubGroups();
   //   };
   // }, [])
-  console.log(props)
   return (
     <>
       <div className="form_groups wrapper full_width">
         <h2 className="title_group full_width">{props.data.title}</h2>
         {props.data.data.map((item, index) => {
-          console.log(index)
           return (
-            <Element key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />
+              <Element key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />
           )
         })}
       </div>

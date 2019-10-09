@@ -8,7 +8,8 @@ import {
     RENDER_BLOCKS,
     SET_VALUE,
     IS_ERROR,
-    SET_PAGE
+    SET_PAGE,
+    IS_GOOGLE_API
 } from './actionTypes';
 export function initialApi(setApi) {
     return {
@@ -58,10 +59,10 @@ export function upSizeGroup(upSize, idGroup) {
         upSize, idGroup
     }
 }
-export function setValue(value, indexGroup, indexElement, typePicker) {
+export function setValue(value, indexGroup, indexElement, typePicker ,typeModel) {
     return {
         type: SET_VALUE,
-        value, indexGroup, indexElement, typePicker
+        value, indexGroup, indexElement, typePicker, typeModel
     }
 }
 export function setError(error) {
@@ -74,5 +75,11 @@ export function setPage(page) {
     return {
         type: SET_PAGE,
         page
+    }
+}
+export function setGoogleApi(google) {
+    return {
+        type: IS_GOOGLE_API,
+        google
     }
 }

@@ -10,11 +10,13 @@ import {
   SET_FIELD_GROOP,
   SET_VALUE,
   IS_ERROR,
-  SET_PAGE
+  SET_PAGE,
+  IS_GOOGLE_API
 } from './actionTypes';
+import { bigIntLiteral } from '@babel/types';
 const initialState = {
   pageData: {
-    step: 0,
+    step: 2,
     class: '',
     values: []
   },
@@ -49,19 +51,43 @@ export function reducer(state = initialState, action) {
         countGroups
       })
     case SET_VALUE:
-      let value, sendData
-      if (!action.typePicker) {
-        value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
-        // if (action.typePicker && state.apiPage.data[action.indexGroup].data[action.indexElement].data.dependence.length > 0) {
-        //   sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.dependence[action.indexElement] = action.value;
-        // }
-        // state.apiPage.data[action.indexGroup].data[action.indexElement].data.value
-      }
-      else {
-        sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
-      }
+      let value, sendData, groupValue
+      state.apiPage.data[action.indexGroup].data.forEach((item, i) => {
+        switch (item.type === 'group') {
+          case true:
+            console.log('true')
+            groupValue = state.apiPage.data[action.indexGroup].data[i].data[action.indexElement].data.value = action.value
+            break;
+          case false:
+              console.log('false')
+            value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value
+            break;
+          default:
+        }
+      })
+      // if (action.typeModel) {
+      //   state.apiPage.data[action.indexGroup].data.forEach((element) => {
+      //     if (element.type === 'group') {
+      //       element.data.forEach((subElement) => {
+      //         switch (subElement.data.name) {
+      //           case 'model':
+      //             subElement.data.value = action.value.model;
+      //             break;
+      //           case 'name':
+      //             subElement.data.value = action.value.name;
+      //             break;
+      //           case 'cost':
+      //             subElement.data.value = action.value.cost;
+      //             break;
+      //           default:
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
       return Object.assign({}, state, {
         value,
+        groupValue,
         sendData
       })
     case IS_ERROR:
@@ -72,6 +98,10 @@ export function reducer(state = initialState, action) {
       let pageCurrent = state.pageData.step = action.page
       return Object.assign({}, state, {
         pageCurrent
+      })
+    case IS_GOOGLE_API:
+      return Object.assign({}, state, {
+        google: action.google
       })
     default:
       return state

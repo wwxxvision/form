@@ -3,12 +3,15 @@ import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import MenuItem from '@material-ui/core/MenuItem';
+// import '../yandexApi/yandex'
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import { ReactDadata } from 'react-dadata';
+import Autocomplete from 'react-google-autocomplete';
+import HelpList from './helpList';
 import Select from '@material-ui/core/Select';
 import { Input } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import addIcons from '../images/addIcon.png';
 import { apiUrl } from '../api';
 import Group from './group';
 import {
@@ -27,7 +30,9 @@ function mapStateToProps(state) {
     indexElement: state.indexElement,
     sendData: state.sendData,
     typePicker: state.typePicker,
-    error: state.error
+    error: state.error,
+    google: state.google,
+    typeModel: state.typeModel
   }
 }
 function mapDispatchToProps(dispatch) {
@@ -86,6 +91,7 @@ function Element(props) {
   const [data] = useState(props.data.data);
   const [isError, setIsError] = useState(false);
   const [typeError, setTypeError] = useState('');
+  const [helpList, setHelpList] = useState(false);
   const formData = new FormData();
   // const className = data.options.length < 1 ? 'full_width select hidden' : 'full_width select';
   const getDependece = () => {
@@ -120,7 +126,7 @@ function Element(props) {
   }
   const changeValue = (e) => {
     return new Promise((resolve) => {
-      props.setValue(e.target.value, props.keyGroup, props.indexEl);
+      props.setValue(e.target.value, props.keyGroup, props.indexEl, false);
       // if (!e.target.value || e.target.value.length < 2) {
       //   setIsError(true);
       // }
@@ -130,6 +136,7 @@ function Element(props) {
       if (!e.target.value) {
         setIsError(true);
         setTypeError('empty_field');
+        setHelpList(false);
       }
       else if (e.target.value.length < 3) {
         setIsError(true);
@@ -138,17 +145,34 @@ function Element(props) {
       else {
         setIsError(false);
       }
+      if (data.name === 'model') {
+        formData.append('model', e.target.value)
+        fetch(`${apiUrl}`, {
+          method: 'POST',
+          body: formData
+        })
+          .then(res => res.json())
+          .then(res => {
+            if (!res.error) {
+              setHelpList(res.products);
+            }
+            else {
+              setHelpList(false);
+            }
+          })
+      }
       resolve(data.value)
     });
   }
   useEffect(() => {
     props.setError(isError)
-  },[isError]);
-  useEffect(() => {
-    if (!data.value) {
-      props.setError(true)
-    }
-  })
+  }, [isError]);
+
+  const addModel = (value) => {
+    console.log(value)
+    props.setValue(value, props.keyGroup, props.indexEl, false, 'true');
+    setHelpList(false);
+  }
   switch (props.data.type) {
     case 'text': {
       return (
@@ -160,11 +184,19 @@ function Element(props) {
             <p className="errorMessage">Поле не заполнено</p>
           }
           <p className="form_label">{data.label}</p>
-          <Input onChange={changeValue}
-            readOnly={data.name === 'cost' ? true : false}
+          <input onChange={changeValue}
+            readOnly={data.name === 'cost' || data.name === 'name' ? true : false}
             name={data.name} type="text"
+            value={data.value ? data.value : ''}
             required={data.required ? true : false}
             className={!isError ? "full_width input_margin" : "full_width error input_margin"} />
+          {data.name === 'model' && helpList &&
+            <div className="help_list">
+              {helpList.map((item, index) => {
+                return (<HelpList addItem={addModel} value={item} key={index} indexEl={index} />)
+              })}
+            </div>
+          }
         </>
       )
     }
@@ -262,7 +294,7 @@ function Element(props) {
     case 'group': {
       return (
         <>
-          <Group indexGroup={props.indexGroup} data={props.data} />
+          <Group indexGroup={props.keyGroup} data={props.data} />
         </>
       )
     }
