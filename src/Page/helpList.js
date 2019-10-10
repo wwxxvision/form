@@ -3,27 +3,18 @@ import '../App.css';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import {
-  initialApi,
-  setFieldGroup,
-  renderBlock
+  initialApi
 } from '../redux/actions';
 function mapStateToProps(state) {
   return {
     apiPage: state.apiPage,
     pageData: state.pageData,
-    fieldGroup: state.fieldGroup,
-    render: state.render,
-    key: state.key,
-    keyGroup: state.keyGroup,
-    fieldHtml: state.fieldHtml,
     isAdd: state.isAdd
   }
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    initialApi,
-    setFieldGroup,
-    renderBlock
+    initialApi
   }, dispatch)
 }
 

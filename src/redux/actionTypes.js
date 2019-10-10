@@ -1,11 +1,5 @@
 export const GET_API_PAGE = 'GET_API_PAGE';
 export const INITIAL_PAGE = 'INITIAL_PAGE';
-export const SET_FIELD_CONFIG = 'SET_FIELD_CONFIG';
-export const SET_FIELD_GROOP = 'SET_FIELD_GROOP';
-export const INITIAL_DATA_OBJECT = 'INITIAL_DATA_OBJECT';
-export const DISPATCH_FIELD_VALUE = 'DISPATCH_FIELD_VALUE';
-export const RENDER_BLOCKS = 'RENDER_BLOCKS';
-export const SIZE_GROUP = 'SIZE_GROUP';
 export const SET_VALUE = 'SET_VALUE';
 export const IS_ERROR = 'IS_ERROR';
 export const SET_PAGE = 'SET_PAGE';

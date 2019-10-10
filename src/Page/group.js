@@ -5,29 +5,16 @@ import { bindActionCreators } from 'redux';
 import addIcons from '../images/addIcon.png';
 import Element from './element'
 import {
-  initialApi,
-  setFieldGroup,
-  renderBlock
+  
 } from '../redux/actions';
-import { isObject } from 'util';
-import { thisExpression } from '@babel/types';
 function mapStateToProps(state) {
   return {
-    apiPage: state.apiPage,
-    pageData: state.pageData,
-    fieldGroup: state.fieldGroup,
-    render: state.render,
-    key: state.key,
-    keyGroup: state.keyGroup,
-    fieldHtml: state.fieldHtml,
-    isAdd: state.isAdd
+    
   }
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    initialApi,
-    setFieldGroup,
-    renderBlock
+    
   }, dispatch)
 }
 
@@ -105,7 +92,7 @@ function Group(props) {
         <h2 className="title_group full_width">{props.data.title}</h2>
         {props.data.data.map((item, index) => {
           return (
-              <Element key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />
+              <Element position={props.position}   key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />
           )
         })}
       </div>

@@ -16,8 +16,6 @@ import { apiUrl } from '../api';
 import Group from './group';
 import {
   initialApi,
-  setFieldGroup,
-  renderBlock,
   setValue,
   setError
 } from '../redux/actions';
@@ -26,8 +24,6 @@ function mapStateToProps(state) {
     apiPage: state.apiPage,
     pageData: state.pageData,
     value: state.value,
-    indexGroup: state.indexGroup,
-    indexElement: state.indexElement,
     sendData: state.sendData,
     typePicker: state.typePicker,
     error: state.error,
@@ -38,8 +34,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     initialApi,
-    setFieldGroup,
-    renderBlock,
     setValue,
     setError
   }, dispatch)
@@ -90,6 +84,7 @@ function mapDispatchToProps(dispatch) {
 function Element(props) {
   const [data] = useState(props.data.data);
   const [isError, setIsError] = useState(false);
+  let [valueInput, setValueInput] = useState(data.value);
   const [typeError, setTypeError] = useState('');
   const [helpList, setHelpList] = useState(false);
   const formData = new FormData();
@@ -126,13 +121,14 @@ function Element(props) {
   }
   const changeValue = (e) => {
     return new Promise((resolve) => {
-      props.setValue(e.target.value, props.keyGroup, props.indexEl, false);
-      // if (!e.target.value || e.target.value.length < 2) {
-      //   setIsError(true);
-      // }
-      // else {
-      //   setIsError(false);
-      // }
+      props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
+      setValueInput(e.target.value)
+      if (!e.target.value || e.target.value.length < 2) {
+        setIsError(true);
+      }
+      else {
+        setIsError(false);
+      }
       if (!e.target.value) {
         setIsError(true);
         setTypeError('empty_field');
@@ -155,6 +151,23 @@ function Element(props) {
           .then(res => {
             if (!res.error) {
               setHelpList(res.products);
+              // if (valueInput.toLowerCase() === res.products[0].model.toLowerCase()) {
+              //   console.log(true);
+              //   props.setValue(res.products, props.keyGroup, props.indexEl, false, true);
+              // }
+              // res.products.filter((result) => {
+              //   if (result.model === valueInput) {
+              //     console.log(result)
+              //   }
+              // })
+              if (res.products) {
+                Object.entries(res.products).forEach((result) => {
+                  if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
+                    props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
+                    console.log(true)
+                  }
+                })
+              }
             }
             else {
               setHelpList(false);
@@ -165,12 +178,11 @@ function Element(props) {
     });
   }
   useEffect(() => {
-    props.setError(isError)
-  }, [isError]);
-
+    setValueInput(data.value)
+  },[data.value])
+  console.log(props.apiPage)
   const addModel = (value) => {
-    console.log(value)
-    props.setValue(value, props.keyGroup, props.indexEl, false, 'true');
+    props.setValue(value, props.keyGroup, props.indexEl, false, true);
     setHelpList(false);
   }
   switch (props.data.type) {
@@ -184,10 +196,10 @@ function Element(props) {
             <p className="errorMessage">Поле не заполнено</p>
           }
           <p className="form_label">{data.label}</p>
-          <input onChange={changeValue}
+          <Input onChange={changeValue}
             readOnly={data.name === 'cost' || data.name === 'name' ? true : false}
-            name={data.name} type="text"
-            value={data.value ? data.value : ''}
+            name={data.name} type='text'
+            value={valueInput}
             required={data.required ? true : false}
             className={!isError ? "full_width input_margin" : "full_width error input_margin"} />
           {data.name === 'model' && helpList &&
@@ -213,7 +225,7 @@ function Element(props) {
           <Select
             onChange={((e) => changeValue(e).then(() => getDependece()))}
             className={!isError ? "full_width" : "full_width error"}
-            value={data.value}
+            value={valueInput}
             required={data.required ? true : false}
           >
             {Object.entries(data.options).map((item, index) => {
@@ -294,7 +306,7 @@ function Element(props) {
     case 'group': {
       return (
         <>
-          <Group indexGroup={props.keyGroup} data={props.data} />
+          <Group position={[props.position, props.indexEl]} indexGroup={props.keyGroup} data={props.data} />
         </>
       )
     }

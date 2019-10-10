@@ -7,8 +7,6 @@ import { apiUrl } from '../api';
 import Group from './group';
 import {
   initialApi,
-  setFieldGroup,
-  renderBlock,
   setError,
   setPage
 } from '../redux/actions';
@@ -16,13 +14,6 @@ function mapStateToProps(state) {
   return {
     apiPage: state.apiPage,
     pageData: state.pageData,
-    fieldGroup: state.fieldGroup,
-    render: state.render,
-    key: state.key,
-    keyGroup: state.keyGroup,
-    fieldHtml: state.fieldHtml,
-    group: state.group,
-    mainGroup: state.mainGroup,
     error: state.error,
     page: state.page
   }
@@ -30,14 +21,13 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     initialApi,
-    setFieldGroup,
-    renderBlock,
     setError,
     setPage
   }, dispatch)
 }
 function RenderPages(props) {
   const [isLoad, setLoad] = useState(false);
+  const [arrayPosition, setArrayPosition] = useState([]);
   const fetchData = () => {
     setLoad(true);
     fetch(`${apiUrl + props.pageData.step}`, {
@@ -70,7 +60,7 @@ function RenderPages(props) {
           <div className="form_block">
             {props.apiPage.data.map((item, index) => {
               return (
-                <Group key={index} indexGroup={index} data={item} />
+                <Group position={index} key={index} indexGroup={index} data={item} />
               )
             })}
           </div>

@@ -2,21 +2,16 @@
 import {
   INITIAL_PAGE,
   GET_API_PAGE,
-  SET_FIELD_CONFIG,
-  INITIAL_DATA_OBJECT,
-  DISPATCH_FIELD_VALUE,
-  RENDER_BLOCKS,
-  SIZE_GROUP,
   SET_FIELD_GROOP,
   SET_VALUE,
   IS_ERROR,
   SET_PAGE,
   IS_GOOGLE_API
 } from './actionTypes';
-import { bigIntLiteral } from '@babel/types';
+import { isArray } from 'util';
 const initialState = {
   pageData: {
-    step: 2,
+    step: 0,
     class: '',
     values: []
   },
@@ -45,50 +40,50 @@ export function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         apiPage: apiValue
       })
-    case SET_FIELD_GROOP:
-      let countGroups = state.fieldGroup.push(action.group)
-      return Object.assign({}, state, {
-        countGroups
-      })
     case SET_VALUE:
-      let value, sendData, groupValue
-      state.apiPage.data[action.indexGroup].data.forEach((item, i) => {
-        switch (item.type === 'group') {
-          case true:
-            console.log('true')
-            groupValue = state.apiPage.data[action.indexGroup].data[i].data[action.indexElement].data.value = action.value
-            break;
-          case false:
-              console.log('false')
-            value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value
-            break;
-          default:
-        }
-      })
-      // if (action.typeModel) {
-      //   state.apiPage.data[action.indexGroup].data.forEach((element) => {
-      //     if (element.type === 'group') {
-      //       element.data.forEach((subElement) => {
-      //         switch (subElement.data.name) {
-      //           case 'model':
-      //             subElement.data.value = action.value.model;
-      //             break;
-      //           case 'name':
-      //             subElement.data.value = action.value.name;
-      //             break;
-      //           case 'cost':
-      //             subElement.data.value = action.value.cost;
-      //             break;
-      //           default:
-      //         }
-      //       })
-      //     }
-      //   })
-      // }
+      let current;
+
+      // !action.typePicker && !action.typeModel ? value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value :
+      //   sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
+      if (isArray(action.position) && !action.typeModel) {
+        current = state.apiPage.data[action.indexGroup]        // let currentPos = state.apiPage.data
+        action.position.forEach((item, index) => {
+          if (item > 0) {
+            current.data[item].data[action.indexElement].data.value = action.value
+          }
+        })
+      }
+      else if (action.typeModel) {
+        console.log(action)
+        state.apiPage.data[action.indexGroup].data.forEach((element) => {
+          if (element.type === 'group') {
+            element.data.forEach((subElement) => {
+              console.log(subElement)
+              switch (subElement.data.name) {
+                case 'model':
+                  subElement.data.value = action.value.model;
+                  break;
+                case 'name':
+                  subElement.data.value = action.value.name;
+                  console.log(subElement)
+                  break;
+                case 'cost':
+                  subElement.data.value = action.value.cost;
+                  break;
+                default:
+              }
+            })
+          }
+        })
+      }
+      else  {
+        state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
+      }
+      if (action.typePicker) {
+        state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
+      }
       return Object.assign({}, state, {
-        value,
-        groupValue,
-        sendData
+        ...state
       })
     case IS_ERROR:
       return Object.assign({}, state, {
