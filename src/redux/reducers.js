@@ -11,7 +11,7 @@ import {
 import { isArray } from 'util';
 const initialState = {
   pageData: {
-    step: 0,
+    step: 2,
     class: '',
     values: []
   },
@@ -24,7 +24,8 @@ const initialState = {
   sizeGroup: [],
   fieldGroup: [],
   countForms: [],
-  sendData: ''
+  sendData: '',
+  changeValue: ''
 }
 export function reducer(state = initialState, action) {
   switch (action.type) {
@@ -41,50 +42,88 @@ export function reducer(state = initialState, action) {
         apiPage: apiValue
       })
     case SET_VALUE:
-      let current;
 
       // !action.typePicker && !action.typeModel ? value = state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value :
       //   sendData = state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
-      if (isArray(action.position) && !action.typeModel) {
-        current = state.apiPage.data[action.indexGroup]        // let currentPos = state.apiPage.data
+      // if (isArray(action.position) && !action.typeModel) {
+      //   current = state.apiPage.data[action.indexGroup]        // let currentPos = state.apiPage.data
+      //   action.position.forEach((item, index) => {
+      //     if (item > 0) {
+      //       current.data[item].data[action.indexElement].data.value = action.value
+      //     }
+      //   })
+      // }
+      // else if (action.typeModel) {
+      //   console.log(action)
+      //   state.apiPage.data[action.indexGroup].data.forEach((element) => {
+      //     if (element.type === 'group') {
+      //       element.data.forEach((subElement) => {
+      //         console.log(subElement)
+      //         switch (subElement.data.name) {
+      //           case 'model':
+      //             subElement.data.value = action.value.model;
+      //             break;
+      //           case 'name':
+      //             subElement.data.value = action.value.name;
+      //             console.log(subElement)
+      //             break;
+      //           case 'cost':
+      //             subElement.data.value = action.value.cost;
+      //             break;
+      //           default:
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
+      // else  {
+      //   state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
+      // }
+      // if (action.typePicker) {
+      //   state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
+      // }
+      if (isArray(action.position) && !action.typeModel) {     // let currentPos = state.apiPage.data
         action.position.forEach((item, index) => {
           if (item > 0) {
-            current.data[item].data[action.indexElement].data.value = action.value
+            return {
+              ...state,
+              changeValue: state.apiPage.data[action.indexGroup].data[item].data[action.indexElement].data.value = action.value
+            }
+          }
+          else {
+            return {
+              ...state,
+              changeValue: state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value
+            }
           }
         })
       }
       else if (action.typeModel) {
-        console.log(action)
         state.apiPage.data[action.indexGroup].data.forEach((element) => {
           if (element.type === 'group') {
             element.data.forEach((subElement) => {
-              console.log(subElement)
               switch (subElement.data.name) {
                 case 'model':
-                  subElement.data.value = action.value.model;
-                  break;
+                  return  {
+                    ...state,
+                    changeValue: subElement.data.value = action.value.model
+                  }
                 case 'name':
-                  subElement.data.value = action.value.name;
-                  console.log(subElement)
-                  break;
+                  return  {
+                    ...state,
+                    changeValue: subElement.data.value = action.value.name
+                  }
                 case 'cost':
-                  subElement.data.value = action.value.cost;
-                  break;
+                  return {
+                    ...state,
+                    changeValue: subElement.data.value = action.value.cost
+                  }
                 default:
               }
             })
           }
         })
       }
-      else  {
-        state.apiPage.data[action.indexGroup].data[action.indexElement].data.value = action.value;
-      }
-      if (action.typePicker) {
-        state.apiPage.data[action.indexGroup].data[action.indexElement].data.options = action.value;
-      }
-      return Object.assign({}, state, {
-        ...state
-      })
     case IS_ERROR:
       return Object.assign({}, state, {
         error: action.error

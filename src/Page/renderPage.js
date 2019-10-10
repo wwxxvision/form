@@ -59,6 +59,7 @@ function RenderPages(props) {
           <h1 className="form__title">Регистрация проектов</h1>
           <div className="form_block">
             {props.apiPage.data.map((item, index) => {
+              console.log(item)
               return (
                 <Group position={index} key={index} indexGroup={index} data={item} />
               )

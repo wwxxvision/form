@@ -28,7 +28,8 @@ function mapStateToProps(state) {
     typePicker: state.typePicker,
     error: state.error,
     google: state.google,
-    typeModel: state.typeModel
+    typeModel: state.typeModel,
+    changeValue: state.changeValue
   }
 }
 function mapDispatchToProps(dispatch) {
@@ -82,7 +83,7 @@ function mapDispatchToProps(dispatch) {
 //   }
 // }
 function Element(props) {
-  const [data] = useState(props.data.data);
+  const [data, setData] = useState(props.data.data);
   const [isError, setIsError] = useState(false);
   let [valueInput, setValueInput] = useState(data.value);
   const [typeError, setTypeError] = useState('');
@@ -160,14 +161,14 @@ function Element(props) {
               //     console.log(result)
               //   }
               // })
-              if (res.products) {
-                Object.entries(res.products).forEach((result) => {
-                  if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
-                    props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
-                    console.log(true)
-                  }
-                })
-              }
+              // if (res.products) {
+              //   Object.entries(res.products).forEach((result) => {
+              //     if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
+              //       props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
+              //       console.log(true)
+              //     }
+              //   })
+              // }
             }
             else {
               setHelpList(false);
@@ -177,12 +178,10 @@ function Element(props) {
       resolve(data.value)
     });
   }
-  useEffect(() => {
-    setValueInput(data.value)
-  },[data.value])
   console.log(props.apiPage)
   const addModel = (value) => {
     props.setValue(value, props.keyGroup, props.indexEl, false, true);
+    setValueInput(props.changeValue)
     setHelpList(false);
   }
   switch (props.data.type) {
