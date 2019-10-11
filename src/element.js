@@ -181,7 +181,6 @@ function Element(props) {
   console.log(props.apiPage)
   const addModel = (value) => {
     props.setValue(value, props.keyGroup, props.indexEl, false, true);
-    setValueInput(props.changeValue)
     setHelpList(false);
   }
   switch (props.data.type) {
