@@ -1,7 +1,15 @@
 import React from 'react';
 import api from '../api';
 import Components from '../components';
+import Group from './group';
 class Element extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      helpList: false,
+      valueInput: ''
+    }
+  }
   addModel = (value) => {
     // props.setValue(value, props.keyGroup, props.indexEl, false, true);
     // setValueInput(props.changeValue)
@@ -97,22 +105,30 @@ class Element extends React.Component {
   }
   render() {
     switch (this.props.data.type) {
-      // case 'text':
-      //   return <Components.text />
-      // case 'select':
-      //   return <Components.select />
-      // case 'date':
-      //   return <Components.date label={} name={} changeValue={} required={} />
-      // case 'date_list':
-      //   return <Components.date_list label={} name={} changeValue={} required={} />
-      // case 'textarea':
-      //   return <Components.textarea label={} changeValue={} required={} />
-      // case 'hidden':
-      //   return <Components.hidden label={this.props.data.data.label} />
-      // case 'group':
-      //   return <Group position={[this.props.position, this.props.indexEl]} indexGroup={this.props.keyGroup} data={this.props.data} />
+      case 'text':
+        return <Components.text value={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
+          name={this.props.data.data.name}
+          required={this.props.data.data.required} helpList={this.state.helpList} />
+      case 'select':
+        return <Components.select changeValue={this.changeValue} name={this.props.data.data.name}
+          valueInput={this.state.valueInput}
+          required={this.props.data.data.required}
+          options={this.props.data.data.options}
+          getDependece={this.getDependece} />
+      case 'date':
+        return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
+          required={this.props.data.data.required} />
+      case 'date_list':
+        return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
+          required={this.props.data.data.required} />
+      case 'textarea':
+        return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required} />
+      case 'hidden':
+        return <Components.hidden label={this.props.data.data.label} />
+      case 'group':
+        return <Group indexGroup={this.props.data.data.keyGroup} data={this.props.data} />
       default:
-        return <Components.default_c type={this.props.data.type} />
+        return <Components.default_c type={this.props.data.data.type} />
     }
   }
 }
