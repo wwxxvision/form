@@ -90,36 +90,36 @@ function Element(props) {
   const [helpList, setHelpList] = useState(false);
   const formData = new FormData();
   // const className = data.options.length < 1 ? 'full_width select hidden' : 'full_width select';
-  const getDependece = () => {
-    if (!data.dependence) {
-      let goSend = false;
-      props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
-        if (!dataValue.data.dependence) {
-          const getKeyByValue = (obj, value) =>
-            Object.keys(obj).find(key => obj[key] === value);
-          const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
-          formData.append(`${dataValue.data.name}[]`, id)
-          dataValue.data.value ? goSend = true : goSend = false;
-        }
-      })
-      if (goSend) {
-        fetch(`${apiUrl}`, {
-          method: 'POST',
-          body: formData
-        })
-          .then(res => res.json())
-          .then(res => {
-            props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
-              if (dataValue.data.dependence) {
-                let apiRes = res.fields.distributors[0].options;
-                props.setValue(apiRes, props.keyGroup, index, true);
-                goSend = false;
-              }
-            })
-          })
-      }
-    }
-  }
+  // const getDependece = () => {
+  //   if (!data.dependence) {
+  //     let goSend = false;
+  //     props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
+  //       if (!dataValue.data.dependence) {
+  //         const getKeyByValue = (obj, value) =>
+  //           Object.keys(obj).find(key => obj[key] === value);
+  //         const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
+  //         formData.append(`${dataValue.data.name}[]`, id)
+  //         dataValue.data.value ? goSend = true : goSend = false;
+  //       }
+  //     })
+  //     if (goSend) {
+  //       fetch(`${apiUrl}`, {
+  //         method: 'POST',
+  //         body: formData
+  //       })
+  //         .then(res => res.json())
+  //         .then(res => {
+  //           props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
+  //             if (dataValue.data.dependence) {
+  //               let apiRes = res.fields.distributors[0].options;
+  //               props.setValue(apiRes, props.keyGroup, index, true);
+  //               goSend = false;
+  //             }
+  //           })
+  //         })
+  //     }
+  //   }
+  // }
   const changeValue = (e) => {
     return new Promise((resolve) => {
       props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
@@ -179,9 +179,6 @@ function Element(props) {
     });
   }
   console.log(props.apiPage)
-  useEffect(() => {
-    setValueInput(data.value)
-  }, [data.value])
   const addModel = (value) => {
     props.setValue(value, props.keyGroup, props.indexEl, false, true);
     setValueInput(props.changeValue)
