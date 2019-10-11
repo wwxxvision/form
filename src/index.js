@@ -1,32 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './App.css';
 import App from './App';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import * as serviceWorker from './serviceWorker';
-import { reducer } from './redux/reducers';
+import reducers from './redux/reducers';
 import devToolsEnhancer from 'remote-redux-devtools';
-const initialState = {
-	pageData: {
-		step: 0,
-		class: '',
-		values: []
-	},
-	apiPage: {
-		data: [],
-		resposneServer: false
-	},
-	fieldConfig: [],
-	fieldValues: [],
-	sizeGroup: [],
-	fieldGroup: [],
-	countForms: [],
-	sendData: '',
-	changeValue: ''
-};
+import initialState from './redux/initialState';
 
-const store = createStore(reducer, initialState, devToolsEnhancer());
+const store = createStore(reducers, initialState, devToolsEnhancer());
 ReactDOM.render(
 	<Provider store={store}>
 		<App />
