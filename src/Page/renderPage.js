@@ -8,7 +8,8 @@ class RenderPages extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoad: false
+      isLoad: false,
+      indexes: []
     }
   }
   changePage = (e) => {
@@ -27,7 +28,7 @@ class RenderPages extends React.Component {
           <div className="form_page flex_center">
             <h1 className="form__title">Регистрация проектов</h1>
             <div className="form_block">
-              {this.props.apiPage.data.map((item, index) => (<Group position={index} key={index} indexGroup={index} data={item} />))}
+              {this.props.apiPage.data.map((item, index) => (<Group path={[index]} key={index} indexGroup={index} data={item} />))}
             </div>
             {this.props.page === 0 &&
               <div onClick={this.changePage} className="button next_button" variant="contained">

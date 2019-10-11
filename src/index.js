@@ -10,7 +10,7 @@ import reducers from './redux/reducers';
 import devToolsEnhancer from 'remote-redux-devtools';
 import initialState from './redux/initialState';
 
-const store = createStore(reducers, initialState, devToolsEnhancer());
+const store = createStore(reducers, initialState,  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 ReactDOM.render(
 	<Provider store={store}>
 		<App />

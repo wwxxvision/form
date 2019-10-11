@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 export default (props) => (
   // className={api.setClasses(['full_width', 'select'], { hidden: props.options })}
-  <div className="full_width">
+  <div className={api.setClasses(['full_width', 'select'], { hidden: !props.options })}>
     <p className="form_label">{props.label}</p>
     <Select
       onChange={props.changeValue}
@@ -14,6 +14,7 @@ export default (props) => (
       required={props.required ? true : false}
     >
       {Object.entries(props.options).map((item, index) => {
+        console.log(item)
         return (
           <MenuItem
             key={index}
