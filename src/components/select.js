@@ -4,10 +4,11 @@ import api from '../api';
 import MenuItem from '@material-ui/core/MenuItem';
 
 export default (props) => (
-  <div className={api.setClasses(['full_width', 'select'], { hidden: props.options })}>
+  // className={api.setClasses(['full_width', 'select'], { hidden: props.options })}
+  <div className="full_width">
     <p className="form_label">{props.label}</p>
     <Select
-      onChange={((e) => props.changeValue(e).then(() => props.getDependece()))}
+      onChange={props.changeValue}
       className="full_width"
       value={props.valueInput}
       required={props.required ? true : false}

@@ -15,93 +15,100 @@ class Element extends React.Component {
     // setValueInput(props.changeValue)
     // setHelpList(false);
   }
-  getDependece = () => {
-    // if (!data.dependence) {
-    //   let goSend = false;
-    //   props.apiPage.data[props.keyGroup].data.forEach((dataValue) => {
-    //     if (!dataValue.data.dependence) {
-    //       const getKeyByValue = (obj, value) =>
-    //         Object.keys(obj).find(key => obj[key] === value);
-    //       const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
-    //       formData.append(`${dataValue.data.name}[]`, id)
-    //       dataValue.data.value ? goSend = true : goSend = false;
-    //     }
-    //   })
-    //   if (goSend) {
-    //     fetch(`${api.url}`, {
-    //       method: 'POST',
-    //       body: formData
-    //     })
-    //       .then(res => res.json())
-    //       .then(res => {
-    //         props.apiPage.data[props.keyGroup].data.forEach((dataValue, index) => {
-    //           if (dataValue.data.dependence) {
-    //             let apiRes = res.fields.distributors[0].options;
-    //             props.setValue(apiRes, props.keyGroup, index, true);
-    //             goSend = false;
-    //           }
-    //         })
-    //       })
-    //   }
-    // }
-  }
   changeValue = (e) => {
-    //   return new Promise((resolve) => {
-    //     props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
-    //     setValueInput(e.target.value)
-    //     if (!e.target.value || e.target.value.length < 2) {
-    //       setIsError(true);
-    //     }
-    //     else {
-    //       setIsError(false);
-    //     }
-    //     if (!e.target.value) {
-    //       setIsError(true);
-    //       setTypeError('empty_field');
-    //       setHelpList(false);
-    //     }
-    //     else if (e.target.value.length < 3) {
-    //       setIsError(true);
-    //       setTypeError('small_length');
-    //     }
-    //     else {
-    //       setIsError(false);
-    //     }
-    //     if (data.name === 'model') {
-    //       formData.append('model', e.target.value)
-    //       fetch(`${api.url}`, {
-    //         method: 'POST',
-    //         body: formData
-    //       })
-    //         .then(res => res.json())
-    //         .then(res => {
-    //           if (!res.error) {
-    //             setHelpList(res.products);
-    //             // if (valueInput.toLowerCase() === res.products[0].model.toLowerCase()) {
-    //             //   console.log(true);
-    //             //   props.setValue(res.products, props.keyGroup, props.indexEl, false, true);
-    //             // }
-    //             // res.products.filter((result) => {
-    //             //   if (result.model === valueInput) {
-    //             //     console.log(result)
-    //             //   }
-    //             // })
-    //             // if (res.products) {
-    //             //   Object.entries(res.products).forEach((result) => {
-    //             //     if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
-    //             //       props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
-    //             //       console.log(true)
-    //             //     }
-    //             //   })
-    //             // }
-    //           }
-    //           else {
-    //             setHelpList(false);
-    //           }
-    //         })
-    //     }
-    //     resolve(data.value)
-    //   });
+    return new Promise((resolve) => {
+      this.setState({
+        valueInput: e.target.value
+      });
+      if (this.props.data.data.type === 'select' && !this.props.data.data.dependence) {
+        let goSend = false;
+        this.props.apiPage.data[this.props.keyGroup].data.forEach((dataValue) => {
+          if (!dataValue.data.dependence) {
+            const getKeyByValue = (obj, value) =>
+              Object.keys(obj).find(key => obj[key] === value);
+            const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
+            const name = dataValue.data.name;
+            this.setState({
+              [name]: id
+            })
+            dataValue.data.value ? goSend = true : goSend = false;
+          }
+        })
+        if (goSend) {
+          fetch(`${api.url}`, {
+            method: 'POST',
+            body: this.state.name
+          })
+            .then(res => res.json())
+            .then(res => {
+              this.props.apiPage.data[this.props.keyGroup].data.forEach((dataValue, index) => {
+                if (dataValue.data.dependence) {
+                  let apiRes = res.fields.distributors[0].options;
+                  // props.setValue(apiRes, props.keyGroup, index, true);
+                  this.props.setRedux({
+                    valueInput: dataValue.data.option = apiRes
+                  })
+                  goSend = false;
+                }
+              })
+            })
+        }
+      }
+      //     props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
+      //     setValueInput(e.target.value)
+      //     if (!e.target.value || e.target.value.length < 2) {
+      //       setIsError(true);
+      //     }
+      //     else {
+      //       setIsError(false);
+      //     }
+      //     if (!e.target.value) {
+      //       setIsError(true);
+      //       setTypeError('empty_field');
+      //       setHelpList(false);
+      //     }
+      //     else if (e.target.value.length < 3) {
+      //       setIsError(true);
+      //       setTypeError('small_length');
+      //     }
+      //     else {
+      //       setIsError(false);
+      //     }
+      //     if (data.name === 'model') {
+      //       formData.append('model', e.target.value)
+      //       fetch(`${api.url}`, {
+      //         method: 'POST',
+      //         body: formData
+      //       })
+      //         .then(res => res.json())
+      //         .then(res => {
+      //           if (!res.error) {
+      //             setHelpList(res.products);
+      //             // if (valueInput.toLowerCase() === res.products[0].model.toLowerCase()) {
+      //             //   console.log(true);
+      //             //   props.setValue(res.products, props.keyGroup, props.indexEl, false, true);
+      //             // }
+      //             // res.products.filter((result) => {
+      //             //   if (result.model === valueInput) {
+      //             //     console.log(result)
+      //             //   }
+      //             // })
+      //             // if (res.products) {
+      //             //   Object.entries(res.products).forEach((result) => {
+      //             //     if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
+      //             //       props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
+      //             //       console.log(true)
+      //             //     }
+      //             //   })
+      //             // }
+      //           }
+      //           else {
+      //             setHelpList(false);
+      //           }
+      //         })
+      //     }
+      resolve(this.props.data.data.value)
+    });
   }
   render() {
     switch (this.props.data.type) {
@@ -114,7 +121,7 @@ class Element extends React.Component {
           valueInput={this.state.valueInput}
           required={this.props.data.data.required}
           options={this.props.data.data.options}
-          getDependece={this.getDependece} />
+        />
       case 'date':
         return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           required={this.props.data.data.required} />
