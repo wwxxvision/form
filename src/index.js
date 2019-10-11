@@ -7,8 +7,26 @@ import { createStore } from 'redux'
 import * as serviceWorker from './serviceWorker';
 import { reducer } from './redux/reducers';
 import devToolsEnhancer from 'remote-redux-devtools';
+const initialState = {
+	pageData: {
+		step: 0,
+		class: '',
+		values: []
+	},
+	apiPage: {
+		data: [],
+		resposneServer: false
+	},
+	fieldConfig: [],
+	fieldValues: [],
+	sizeGroup: [],
+	fieldGroup: [],
+	countForms: [],
+	sendData: '',
+	changeValue: ''
+};
 
-const store = createStore(reducer, devToolsEnhancer());
+const store = createStore(reducer, initialState, devToolsEnhancer());
 ReactDOM.render(
 	<Provider store={store}>
 		<App />
