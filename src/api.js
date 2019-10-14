@@ -28,14 +28,15 @@ const api = {
     })
       .then(res => res.json())
   },
-  getRefElement: (apiPageData = {}, path = []) => {
+  getRefElement: (apiPageData = {}, path = [], uiValue) => {
+    console.log(uiValue)
     const getValue = (value) => {
       for (let i = 0; i < path.length; i++) {
          value  = value.data[path[i]];
       }
-      return value
+      return value.data.value = uiValue;
     }
-    console.log(getValue(apiPageData))
+     getValue(apiPageData);
   },
   setClasses: (defaultClasses = false, isActiveClasses = false) => {
     //defaultClasses = ['className']

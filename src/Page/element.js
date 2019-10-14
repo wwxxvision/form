@@ -61,8 +61,11 @@ class Element extends React.Component {
       // })
       // !this.props.subElement ?  toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value : 
       // toReduxValue.data[0].data[this.props.keysGroup].data[this.props.indexEl].data.value = e.target.value
-
-      let currentItem = api.getRefElement(toReduxValue, this.props.path);
+      let currentItem = api.getRefElement(toReduxValue, this.props.path, e.target.value);
+      this.props.setRedux({
+        toReduxValue
+      });
+      console.log(currentItem)
     }
     const setDependeces = () => {
       let goSend = false;
