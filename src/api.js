@@ -29,20 +29,13 @@ const api = {
       .then(res => res.json())
   },
   getRefElement: (apiPageData = {}, path = []) => {
-    let elem = apiPageData.data, startPos;
-    const recurs = () => {
+    const getValue = (value) => {
       for (let i = 0; i < path.length; i++) {
-        startPos = elem[i];
-        for (let j = 0; j < startPos.data.length; j++) {
-          if (startPos.data[j].type === 'group') {
-            recurs(startPos, path)
-            console.log(elem)
-          }
-        }
-        return elem
+         value  = value.data[path[i]];
       }
+      return value
     }
-    recurs();
+    console.log(getValue(apiPageData))
   },
   setClasses: (defaultClasses = false, isActiveClasses = false) => {
     //defaultClasses = ['className']
