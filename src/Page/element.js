@@ -20,57 +20,20 @@ class Element extends React.Component {
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
+    let current = '';
     const setValueToRedux = () => {
       this.setState({
         valueInput: e.target.value
       });
-      // const recurseFounder = () => {
-      //   if (toReduxValue.data[this.props.keyGroup].type === 'group') {
-      //     if (toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].type !== 'group') {
-      //       toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value
-      //     }
-      //     else {
-      //       toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data[this.props.indexEl].data.value = e.target.value
-      //     }
-      //   }
-      //  }
-      //  recurseFounder();
-      // switch (this.props.page) {
-      //   case 0:
-      //       toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value
-      //     break;
-      //   case 1:
-      //       toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value
-      //     break;
-      //   case 2:
-      //       toReduxValue.data[this.props.keyGroup ? this.props.keyGroup : this.props.indexGroup].data.forEach((item, i) => {
-      //         if (item.type === 'group') {
-      //           item.data[this.props.indexEl].data.value = e.target.value
-      //         }
-      //       })
-      //       console.log(this.props.keyGroup)
-      //     break;
-      // }
-      // pos.forEach((item) => {
-      //   if(item > 0) {
-      //     toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value
-      //   }
-      //   else {
-      //     toReduxValue.data[this.props.keyGroup].data[item].data[this.props.indexEl].data.value = e.target.value
-      //   }
-      // })
-      // !this.props.subElement ?  toReduxValue.data[this.props.keyGroup].data[this.props.indexEl].data.value = e.target.value : 
-      // toReduxValue.data[0].data[this.props.keysGroup].data[this.props.indexEl].data.value = e.target.value
-      let currentItem = api.getRefElement(toReduxValue, this.props.path, e.target.value);
+      api.getRefElement(toReduxValue, this.props.path, e.target.value);
       this.props.setRedux({
         toReduxValue
       });
-      console.log(currentItem)
     }
     const setDependeces = () => {
       let goSend = false;
       toReduxValue.data[this.props.keyGroup].data.forEach((dataValue) => {
-        if (!dataValue.data.dependence) {
+        if (!dataValue.data.dependence && dataValue.type !== 'hidden') {
           const getKeyByValue = (obj, value) =>
             Object.keys(obj).find(key => obj[key] === value);
           const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
@@ -89,7 +52,6 @@ class Element extends React.Component {
               if (dataValue.data.dependence) {
                 let apiRes = res.fields.distributors[0].options;
                 toReduxValue.data[this.props.keyGroup].data[index].data.options = apiRes
-                // props.setValue(apiRes, props.keyGroup, index, true);
                 this.props.setRedux({
                   toReduxValue
                 })
@@ -98,9 +60,51 @@ class Element extends React.Component {
           })
       }
     }
+    console.log(dataApi.name)
     setValueToRedux();
     if (dataApi.type === 'select' && !dataApi.dependence && dataApi.value) {
       setDependeces();
+    }
+    else if (dataApi.name === 'model') {
+      formData.append('model', e.target.value)
+      fetch(`${api.url}`, {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(res => {
+          !res.error ? this.setState({
+            helpList: res.products
+          }) : this.setState({
+            helpList: false
+          })
+          if (res.products) {
+            Object.entries(res.products).map((result) => {
+              if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
+                current = result[1];
+              }
+            })
+          }
+        }).then(() => {
+          if (current) {
+            let newReduxValues = { ...this.props.apiPage };
+            newReduxValues.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
+              switch (el.data.name) {
+                case 'cost':
+                  el.data.value = current.cost;
+                  return this.props.setRedux({
+                    newReduxValues
+                  });
+                case 'name':
+                  el.data.value = current.name;
+                  return this.props.setRedux({
+                    newReduxValues
+                  });
+                  default:
+              }
+            })
+          }
+        })
     }
     //     props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
     //     setValueInput(e.target.value)
@@ -159,7 +163,7 @@ class Element extends React.Component {
   render() {
     switch (this.props.data.type) {
       case 'text':
-        return <Components.text value={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
+        return <Components.text value={this.props.data.data.value} valueInput={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
           name={this.props.data.data.name}
           required={this.props.data.data.required} helpList={this.state.helpList} />
       case 'select':
@@ -185,7 +189,7 @@ class Element extends React.Component {
         this.props.setRedux({
           newKey
         })
-        return <Group path={[...this.props.path]}  data={this.props.data} />
+        return <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
       default:
         return <Components.default_c type={this.props.data.data.type} />
     }

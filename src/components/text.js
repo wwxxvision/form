@@ -4,11 +4,12 @@ import { Input } from '@material-ui/core';
 
 export default (props) => (
     <React.Fragment>
+        {console.log(props.value)}
         <p className="form_label">{props.label}</p>
         <Input onChange={props.changeValue}
             readOnly={props.name === 'cost' || props.name === 'name' ? true : false}
             name={props.name} type='text'
-            value={props.valueInput}
+            value={props.name !== 'cost' && props.name !== 'name' ? props.valueInput : props.value}
             required={props.required ? true : false}
             className="full_width input_margin"
         />
