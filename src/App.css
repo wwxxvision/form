@@ -124,8 +124,12 @@
 }
 .error {
   border-bottom: 2px solid #fc1303;
+  width: 100%;
 }
-.errorMessage {
+.error::before {
+  border-bottom: none!important;
+}
+.error_message {
   margin-top: 5px;
   color: #fc1303;
   font-size: 14px;
@@ -170,4 +174,10 @@
   opacity: .6;
   transition: 0.5s;
   cursor: pointer;
+}
+.button_add {
+  font-size: 13px;
+}
+.button_delete_margin_left {
+  margin-left: 10px;
 }

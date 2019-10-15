@@ -13,5 +13,5 @@ export default {
     date_list,
     date,
     select,
-    text,
+    text
 }

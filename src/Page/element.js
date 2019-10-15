@@ -9,8 +9,9 @@ class Element extends React.Component {
     this.state = {
       helpList: false,
       valueInput: '',
-      current: '' ,
-      currentPrice: 0
+      current: '',
+      currentPrice: 0,
+      isError: false
     }
   }
   addModel = (value) => {
@@ -22,11 +23,15 @@ class Element extends React.Component {
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
-    let currentValue, current ;
     const setValueToRedux = () => {
       this.setState({
         valueInput: e.target.value,
       });
+      !e.target.value ? (this.setState({
+        isError: true
+      })) : (this.setState({
+        isError: false
+      }));
       api.getRefElement(toReduxValue, this.props.path, e.target.value);
       this.props.setRedux({
         toReduxValue
@@ -50,14 +55,16 @@ class Element extends React.Component {
         })
           .then(res => res.json())
           .then(res => {
-            this.props.apiPage.data[this.props.keyGroup].data.forEach((dataValue, index) => {
+            let dependenceValues = { ...this.props.toReduxValue }
+            dependenceValues.data[this.props.keyGroup].data.map((dataValue, index) => {
               if (dataValue.data.dependence) {
                 let apiRes = res.fields.distributors[0].options;
-                toReduxValue.data[this.props.keyGroup].data[index].data.options = apiRes
+                dependenceValues.data[this.props.keyGroup].data[index].data.options = apiRes
                 this.props.setRedux({
-                  toReduxValue
-                })
+                  dependenceValues
+                });
               }
+              return this.props.dependenceValues;
             })
           })
       }
@@ -85,17 +92,20 @@ class Element extends React.Component {
                 this.setState({
                   helpList: false
                 })
-                current = result[1];
+                this.setState({
+                  current: result[1]
+                })
               }
+              return this.state;
             })
           }
         }).then((res) => {
-          if (current) {
-            let newReduxValues = { ...this.props.apiPage };
+          if (this.state.current) {
+            let newReduxValues = { ...this.props.toReduxValue };
             newReduxValues.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
               switch (el.data.name) {
                 case 'cost':
-                  el.data.value = current.cost;
+                  el.data.value = parseInt(this.state.current.cost);
                   let stateValue = el.data.value;
                   this.props.setRedux({
                     stateValue
@@ -104,12 +114,13 @@ class Element extends React.Component {
                     newReduxValues
                   });
                 case 'name':
-                  el.data.value = current.name;
+                  el.data.value = this.state.current.name;
                   return this.props.setRedux({
                     newReduxValues
                   });
                 default:
               }
+              return this.props.newReduxValues;
             })
           }
         })
@@ -122,117 +133,76 @@ class Element extends React.Component {
             if (el.data.value) {
               let old = this.props.stateValue;
               !def ? el.data.value = old * this.state.valueInput : el.data.value = old
-              return this.props.setRedux({
-                countValueToRedux
-              });
             }
           }
+          return this.props.setRedux({
+            countValueToRedux
+          });
         })
       }
-       if (e.target.value > 0) {
+      if (e.target.value > 0) {
         this.setState({
           valueInput: e.target.value.replace(/\D/, '')
         }, (() => {
           callBackCost();
         }));
-       }
-       else {
+      }
+      else {
         this.setState({
           valueInput: 1
         }, (() => {
           callBackCost(true);
         }));
-       }
+      }
     }
-  //     props.setValue(e.target.value, props.keyGroup, props.indexEl, false, false, props.position);
-  //     setValueInput(e.target.value)
-  //     if (!e.target.value || e.target.value.length < 2) {
-  //       setIsError(true);
-  //     }
-  //     else {
-  //       setIsError(false);
-  //     }
-  //     if (!e.target.value) {
-  //       setIsError(true);
-  //       setTypeError('empty_field');
-  //       setHelpList(false);
-  //     }
-  //     else if (e.target.value.length < 3) {
-  //       setIsError(true);
-  //       setTypeError('small_length');
-  //     }
-  //     else {
-  //       setIsError(false);
-  //     }
-  //     if (data.name === 'model') {
-  //       formData.append('model', e.target.value)
-  //       fetch(`${api.url}`, {
-  //         method: 'POST',
-  //         body: formData
-  //       })
-  //         .then(res => res.json())
-  //         .then(res => {
-  //           if (!res.error) {
-  //             setHelpList(res.products);
-  //             // if (valueInput.toLowerCase() === res.products[0].model.toLowerCase()) {
-  //             //   console.log(true);
-  //             //   props.setValue(res.products, props.keyGroup, props.indexEl, false, true);
-  //             // }
-  //             // res.products.filter((result) => {
-  //             //   if (result.model === valueInput) {
-  //             //     console.log(result)
-  //             //   }
-  //             // })
-  //             // if (res.products) {
-  //             //   Object.entries(res.products).forEach((result) => {
-  //             //     if (result[1].model.toUpperCase() == valueInput.toUpperCase()) {
-  //             //       props.setValue(result[1], props.keyGroup, props.indexEl, false, true);
-  //             //       console.log(true)
-  //             //     }
-  //             //   })
-  //             // }
-  //           }
-  //           else {
-  //             setHelpList(false);
-  //           }
-  //         })
-  //     }
-}
-render() {
-  console.log(this.state)
-  switch (this.props.data.type) {
-    case 'text':
-      return <Components.text value={this.props.data.data.value} valueInput={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
-        name={this.props.data.data.name}
-        required={this.props.data.data.required} helpList={this.state.helpList} />
-    case 'select':
-      return <Components.select changeValue={this.changeValue} name={this.props.data.data.name}
-        valueInput={this.state.valueInput}
-        required={this.props.data.data.required}
-        options={this.props.data.data.options}
-        label={this.props.data.data.label}
-      />
-    case 'date':
-      return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
-        required={this.props.data.data.required} />
-    case 'date_list':
-      return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
-        required={this.props.data.data.required} />
-    case 'textarea':
-      return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required} />
-    case 'hidden':
-      return <Components.hidden label={this.props.data.data.label} />
-    case 'group':
-      let newKey = { ...this.props.keyGroup };
-      newKey = this.props.indexEl;
-      this.props.setRedux({
-        newKey
-      })
-      return <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-    default:
-      return <Components.default_c type={this.props.data.data.type} />
   }
-}
+  render() {
+    switch (this.props.data.type) {
+      case 'text':
+        return (
+          <React.Fragment>
+            <Components.text value={this.props.data.data.value} valueInput={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
+              name={this.props.data.data.name}
+              validation={this.state.isError}
+              required={this.props.data.data.required} helpList={this.state.helpList} />
+          </React.Fragment>
+        )
+      case 'select':
+        return <Components.select changeValue={this.changeValue} name={this.props.data.data.name}
+          valueInput={this.state.valueInput}
+          value={this.props.data.data.value}
+          dependence={this.props.data.data.dependence}
+          required={this.props.data.data.required}
+          options={this.props.data.data.options}
+          validation={this.state.isError}
+          label={this.props.data.data.label}
+        />
+      case 'date':
+        return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
+          validation={this.state.isError}
+          required={this.props.data.data.required} />
+
+      case 'date_list':
+        return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
+            validation={this.state.isError}
+          required={this.props.data.data.required} />
+      case 'textarea':
+        return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
+        validation={this.state.isError}
+         />
+      case 'hidden':
+        return <Components.hidden label={this.props.data.data.label} />
+      case 'group':
+        let newKey = { ...this.props.keyGroup };
+        newKey = this.props.indexEl;
+        this.props.setRedux({
+          newKey
+        })
+        return <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
+      default:
+        return <Components.default_c type={this.props.data.data.type} />
+    }
+  }
 }
 
 export default api.connect(Element);

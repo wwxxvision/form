@@ -6,7 +6,7 @@ import api from '../api';
 class Form extends React.Component {
   componentDidMount() {
     api.fetchData(this.props.page).then((res) => {
-      this.props.setRedux({ apiPage: res });
+      this.props.setRedux({ apiPage: res, empty: res });
     });
   }
   render() {

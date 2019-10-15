@@ -2,8 +2,7 @@ import React from 'react';
 import preloaders from '../images/preloader.gif';
 import api from '../api';
 import Group from './group';
-
-
+import Controllers from '../components/contollers';
 class RenderPages extends React.Component {
   constructor(props) {
     super(props);
@@ -22,13 +21,24 @@ class RenderPages extends React.Component {
     })
   }
   render() {
+    console.log(this.props)
     return (
       <React.Fragment>
         {!this.state.isLoad &&
           <div className="form_page flex_center">
             <h1 className="form__title">Регистрация проектов</h1>
             <div className="form_block">
-              {this.props.apiPage.data.map((item, index) => (<Group path={[index]} key={index} indexGroup={index} data={item} />))}
+              {this.props.apiPage.data.map((item, index) => {
+                if (item.type !== 'hidden') {
+                  return (
+                    <React.Fragment key={index + 'fragment'} >
+                      <Group path={[index]} key={index} indexGroup={index} data={item} />
+                      <Controllers  key={item} dataApi={this.props.apiPage} index={index} />
+                    </React.Fragment>
+                  )
+                }
+              })
+              }
             </div>
             {this.props.page === 0 &&
               <div onClick={this.changePage} className="button next_button" variant="contained">

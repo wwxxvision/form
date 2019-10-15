@@ -29,14 +29,13 @@ const api = {
       .then(res => res.json())
   },
   getRefElement: (apiPageData = {}, path = [], uiValue) => {
-    console.log(uiValue)
     const getValue = (value) => {
       for (let i = 0; i < path.length; i++) {
-         value  = value.data[path[i]];
+        value = value.data[path[i]];
       }
       return value.data.value = uiValue;
     }
-     getValue(apiPageData);
+    getValue(apiPageData);
   },
   setClasses: (defaultClasses = false, isActiveClasses = false) => {
     //defaultClasses = ['className']

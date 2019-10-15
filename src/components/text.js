@@ -1,7 +1,7 @@
 import React from 'react';
 import HelpList from '../Page/helpList';
 import { Input } from '@material-ui/core';
-
+import api from '../api';
 export default (props) => (
     <React.Fragment>
         <p className="form_label">{props.label}</p>
@@ -10,7 +10,7 @@ export default (props) => (
             name={props.name} type={"text"}
             value={props.name !== 'cost' && props.name !== 'name' ? props.valueInput : props.value}
             required={props.required ? true : false}
-            className="full_width input_margin"
+            className={api.setClasses(['form_label full_width', 'input_margin'], { error: props.validation && props.required })}
         />
         {props.name === 'model' && props.helpList &&
             <div className="help_list">
@@ -18,6 +18,9 @@ export default (props) => (
                     return (<HelpList addItem={props.addModel} value={item} key={index} indexEl={index} />)
                 })}
             </div>
+        }
+        {props.validation && props.required &&
+            <span className="error_message">Это поле обязательно для заполения</span>
         }
     </React.Fragment>
 )

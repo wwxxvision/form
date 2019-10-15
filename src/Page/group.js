@@ -8,7 +8,7 @@ function Group(props) {
       <h2 className="title_group full_width">{props.data.title}</h2>
       {props.data.type !== 'hidden' &&
         props.data.data.map((item, index) => 
-        <Element path={[...props.path, index]} key={index} indexEl={index} keyGroup={props.indexGroup} data={item} />)
+        <Element path={[...props.path, index]} key={index} indexEl={index}  keyGroup={props.indexGroup} data={item} />)
       }
     </div>
   )
