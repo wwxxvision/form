@@ -11,13 +11,11 @@ class Element extends React.Component {
       valueInput: '',
       current: '',
       currentPrice: 0,
-      isError: false
+      isError: false,
+      complete: false
     }
   }
   addModel = (value) => {
-    // props.setValue(value, props.keyGroup, props.indexEl, false, true);
-    // setValueInput(props.changeValue)
-    // setHelpList(false);
     let addModelToRedux = { ...this.props.toReduxValue };
     addModelToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
       switch (el.data.name) {
@@ -122,10 +120,9 @@ class Element extends React.Component {
             Object.entries(res.products).map((result) => {
               if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
                 this.setState({
+                  current: result[1],
+                  complete: true,
                   helpList: false
-                })
-                this.setState({
-                  current: result[1]
                 })
               }
               return this.state;
@@ -156,6 +153,34 @@ class Element extends React.Component {
             })
           }
         })
+      if ((e.target.value !== this.state.current.name && this.state.complete) || !e.target.value) {
+        let removeToRedux = { ...this.props.newReduxValues };
+        removeToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
+          switch (el.data.name) {
+            case 'cost':
+              console.log(true)
+              el.data.value = '';
+              let stateValue = el.data.value;
+              this.props.setRedux({
+                stateValue
+              })
+              return this.props.setRedux({
+                removeToRedux
+              });
+            case 'name':
+              el.data.value = '';
+              return this.props.setRedux({
+                removeToRedux
+              });
+            default:
+          }
+          this.setState({
+            complete: false,
+            current: ''
+          })
+          return this.props.removeToRedux;
+        })
+      }
     }
     else if (dataApi.name === 'count') {
       const callBackCost = (def) => {
