@@ -1,15 +1,12 @@
 import React from 'react';
 import api from '../api';
-
+import clone from 'clone';
 class DeleteItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   removeElementAds = () => {
-    let deleteStateToRedux = {...this.props.addStateToRedux};
-    deleteStateToRedux.data.splice(this.props.newPath, 1);
+    let deleteStateToRedux = clone(this.props.addStateToRedux);
+    let filterArray = deleteStateToRedux.data.filter((item, ind) => ind !== this.props.newPath);
     this.props.setRedux({
-      deleteStateToRedux
+      filterArray
     });
   }
   render() {

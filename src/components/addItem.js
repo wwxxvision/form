@@ -2,9 +2,6 @@ import React from 'react';
 import api from '../api';
 import clone from 'clone';
 class AddItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   addingItem = () => {
     let addStateToRedux = {...this.props.apiPage};
     let cloneObj = clone(api.clearObject);

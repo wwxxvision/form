@@ -7,6 +7,7 @@ export default (props) => (
     <TextField
       onChange={props.changeValue}
       required={props.required ? true : false}
+      value={props.valueInput}
       className="full_width input_margin"
       multiline={true} />
   </React.Fragment>

@@ -2,7 +2,7 @@ import React from 'react';
 import api from '../api';
 import Components from '../components';
 import Group from './group';
-
+import HelpList from '../Page/helpList';
 class Element extends React.Component {
   constructor(props) {
     super(props);
@@ -18,6 +18,38 @@ class Element extends React.Component {
     // props.setValue(value, props.keyGroup, props.indexEl, false, true);
     // setValueInput(props.changeValue)
     // setHelpList(false);
+    let addModelToRedux = { ...this.props.toReduxValue };
+    addModelToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
+      switch (el.data.name) {
+        case 'cost':
+          el.data.value = parseInt(value.cost);
+          let stateValue = el.data.value;
+          this.props.setRedux({
+            stateValue
+          })
+          return this.props.setRedux({
+            addModelToRedux
+          });
+        case 'name':
+          el.data.value = value.name;
+          return this.props.setRedux({
+            addModelToRedux
+          });
+        case 'model':
+          el.data.value = value.model;
+          this.setState({
+            valueInput: value.model
+          })
+          return this.props.setRedux({
+            addModelToRedux
+          });
+        default:
+      }
+      this.setState({
+        helpList: false
+      })
+      return this.props.newReduxValues;
+    })
   }
   changeValue = (e) => {
     let formData = new FormData();
@@ -165,6 +197,13 @@ class Element extends React.Component {
               name={this.props.data.data.name}
               validation={this.state.isError}
               required={this.props.data.data.required} helpList={this.state.helpList} />
+            {this.props.data.data.name === 'model' && this.state.helpList &&
+              <div className="help_list">
+                {this.state.helpList.map((item, index) => {
+                  return (<HelpList addItem={this.addModel} value={item} key={index} indexEl={index} />)
+                })}
+              </div>
+            }
           </React.Fragment>
         )
       case 'select':
@@ -180,23 +219,21 @@ class Element extends React.Component {
       case 'date':
         return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
+          valueInput={this.state.valueInput}
           required={this.props.data.data.required} />
       case 'date_list':
         return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
+          valueInput={this.state.valueInput}
           required={this.props.data.data.required} />
       case 'textarea':
         return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
+          valueInput={this.state.valueInput}
           validation={this.state.isError}
         />
       case 'hidden':
         return <Components.hidden label={this.props.data.data.label} />
       case 'group':
-        let newKey = { ...this.props.keyGroup };
-        newKey = this.props.indexEl;
-        this.props.setRedux({
-          newKey
-        })
         return <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
       default:
         return <Components.default_c type={this.props.data.data.type} />

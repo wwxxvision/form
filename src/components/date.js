@@ -8,6 +8,7 @@ export default (props) => (
         <Input
             onChange={props.changeValue}
             name={props.name} type="date"
+            value={props.valueInput}
             required={props.required ? true : false}
             className={api.setClasses(['full_width', 'input_margin'])}
         />
