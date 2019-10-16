@@ -41,8 +41,7 @@ class Element extends React.Component {
       let goSend = false;
       toReduxValue.data[this.props.keyGroup].data.forEach((dataValue) => {
         if (!dataValue.data.dependence && dataValue.type !== 'hidden') {
-          const getKeyByValue = (obj, value) =>
-            Object.keys(obj).find(key => obj[key] === value);
+          const getKeyByValue = (obj, value) => Object.keys(obj).find(key => obj[key] === value);
           const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
           formData.append(`${dataValue.data.name}[]`, id)
           dataValue.data.value ? goSend = true : goSend = false;
@@ -59,6 +58,7 @@ class Element extends React.Component {
             dependenceValues.data[this.props.keyGroup].data.map((dataValue, index) => {
               if (dataValue.data.dependence) {
                 let apiRes = res.fields.distributors[0].options;
+                console.log(this.props.keyGroup)
                 dependenceValues.data[this.props.keyGroup].data[index].data.options = apiRes
                 this.props.setRedux({
                   dependenceValues
@@ -181,15 +181,14 @@ class Element extends React.Component {
         return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
           required={this.props.data.data.required} />
-
       case 'date_list':
         return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
-            validation={this.state.isError}
+          validation={this.state.isError}
           required={this.props.data.data.required} />
       case 'textarea':
         return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
-        validation={this.state.isError}
-         />
+          validation={this.state.isError}
+        />
       case 'hidden':
         return <Components.hidden label={this.props.data.data.label} />
       case 'group':

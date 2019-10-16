@@ -1,14 +1,15 @@
 import React from 'react';
 import api from '../api';
-
+import clone from 'clone';
 class AddItem extends React.Component {
   constructor(props) {
     super(props);
   }
   addingItem = () => {
-    let addStateToRedux = { ...this.props.dataApi };
-    addStateToRedux.data.splice(this.props.newPath, 0, addStateToRedux.data[this.props.newPath]);
-    addStateToRedux.data[this.props.newPath + 1].duplicate = true;
+    let addStateToRedux = {...this.props.apiPage};
+    let cloneObj = clone(api.clearObject);
+    cloneObj.data[this.props.newPath].duplicate = true;
+    addStateToRedux.data.splice(this.props.newPath, 0 ,cloneObj.data[this.props.newPath]);
     this.props.setRedux({
       addStateToRedux
     });

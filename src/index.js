@@ -7,7 +7,6 @@ import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import * as serviceWorker from './serviceWorker';
 import reducers from './redux/reducers';
-import devToolsEnhancer from 'remote-redux-devtools';
 import initialState from './redux/initialState';
 
 const store = createStore(reducers, initialState,  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());

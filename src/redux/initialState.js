@@ -4,14 +4,7 @@ const initialState = {
     data: [],
     resposneServer: false
   },
-  empty: {},
-  fieldConfig: [],
-  fieldValues: [],
-  sizeGroup: [],
-  fieldGroup: [],
-  countForms: [],
-  sendData: '',
-  changeValue: ''
+  sendData: ''
 }
 
 export default initialState;

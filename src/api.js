@@ -21,12 +21,14 @@ const api = {
         setRedux: (state) => dispatch(actions.setRedux(state))
       }))(component_);
   },
+  clearObject: '',
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
     return fetch(`${APIURL + step}`, {
       method: 'GET'
     })
       .then(res => res.json())
+      .then(res => api.clearObject = res)
   },
   getRefElement: (apiPageData = {}, path = [], uiValue) => {
     const getValue = (value) => {
