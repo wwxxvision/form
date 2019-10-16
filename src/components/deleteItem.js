@@ -1,7 +1,6 @@
 import React from 'react';
 import api from '../api';
 
-
 class DeleteItem extends React.Component {
   constructor(props) {
     super(props);

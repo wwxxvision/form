@@ -10,7 +10,7 @@ export default (props) => (
     <Select
       onChange={props.changeValue}
       className={api.setClasses(['full_width'], {error: props.validation })}
-      value={!props.dependence ? props.valueInput : props.value}
+      value={props.valueInput}
       required={props.required ? true : false}
     >
       {Object.entries(props.options).map((item, index) => {

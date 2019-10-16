@@ -8,7 +8,7 @@ class AddItem extends React.Component {
   addingItem = () => {
     let addStateToRedux = {...this.props.apiPage};
     let cloneObj = clone(api.clearObject);
-    cloneObj.data[this.props.newPath].duplicate = true;
+    addStateToRedux.data[this.props.newPath].duplicate = true;
     addStateToRedux.data.splice(this.props.newPath, 0 ,cloneObj.data[this.props.newPath]);
     this.props.setRedux({
       addStateToRedux
