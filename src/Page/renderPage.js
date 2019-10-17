@@ -12,13 +12,22 @@ class RenderPages extends React.Component {
     }
   }
   changePage = (e) => {
+    fetch('')
     let page = this.props.page;
+    let sendObject = JSON.stringify({
+        data: this.props.apiPage.data,
+        type: 'section',
+        method: 'save',
+        page: page
+    })
+    api.saveData(sendObject);
     e.target.classList.contains('back_button') ? (page -= 1) : (page += 1);
     api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
       this.props.setRedux({ apiPage: res });
       this.setState({ isLoad: false });
       this.props.setRedux({ page });
     })
+    api.getClearObject(page);
   }
   render() {
     return (
@@ -28,13 +37,16 @@ class RenderPages extends React.Component {
             <h1 className="form__title">Регистрация проектов</h1>
             <div className="form_block">
               {this.props.apiPage.data.map((item, index) => {
-                if (item.type !== 'hidden') {
+                if (item && item.type !== 'hidden') {
                   return (
                     <React.Fragment key={index + 'fragment'} >
                       <Group path={[index]} key={index} indexGroup={index} data={item} />
-                      <Controllers  key={item} dataApi={this.props.apiPage} index={index} />
+                      <Controllers fields={item.data}  type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
                     </React.Fragment>
                   )
+                }
+                else {
+                  return false;
                 }
               })
               }

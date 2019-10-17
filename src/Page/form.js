@@ -8,6 +8,7 @@ class Form extends React.Component {
     api.fetchData(this.props.page).then((res) => {
       this.props.setRedux({ apiPage: res, empty: res });
     });
+    api.getClearObject(this.props.page);
   }
   render() {
     if (!this.props.apiPage.status) {

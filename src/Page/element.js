@@ -50,6 +50,7 @@ class Element extends React.Component {
     })
   }
   changeValue = (e) => {
+    console.log(e.target.value)
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
@@ -88,8 +89,8 @@ class Element extends React.Component {
             dependenceValues.data[this.props.keyGroup].data.map((dataValue, index) => {
               if (dataValue.data.dependence) {
                 let apiRes = res.fields.distributors[0].options;
-                console.log(this.props.keyGroup)
                 dependenceValues.data[this.props.keyGroup].data[index].data.options = apiRes
+                console.log(Object.entries(apiRes))
                 this.props.setRedux({
                   dependenceValues
                 });

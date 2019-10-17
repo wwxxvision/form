@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
-
+import clone from 'clone';
 const whithoutType = (state) => {
   let newState = {};
   Object.keys(state).forEach((key) => {
@@ -21,14 +21,38 @@ const api = {
         setRedux: (state) => dispatch(actions.setRedux(state))
       }))(component_);
   },
-  clearObject: '',
+  clearObject: {},
+  getClearObject: ((step) => {
+    console.log(step)
+    return fetch(`${APIURL + step}`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(res => api.clearObject = res.data.filter((item) => item.type !== 'hidden'))
+  }),
+  resetDataObject: (object, pathToGroup) => {
+    const resetValue = (value) => {
+      value.data.forEach((item, i) => {
+        item.data.value = ''
+        return item
+      })
+    }
+    return resetValue(object);
+  },
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
     return fetch(`${APIURL + step}`, {
       method: 'GET'
     })
       .then(res => res.json())
-      .then(res => api.clearObject = res)
+  },
+  saveData: (objectTosend) => {
+    return fetch(`${APIURL}`, {
+      method: 'POST',
+      body: objectTosend
+    })
+      .then(res => res.json())
+      .then(res => console.log(res))
   },
   getRefElement: (apiPageData = {}, path = [], uiValue) => {
     const getValue = (value) => {

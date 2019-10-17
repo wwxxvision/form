@@ -13,14 +13,12 @@ export default (props) => (
       value={props.valueInput}
       required={props.required ? true : false}
     >
-      {Object.entries(props.options).map((item, index) => {
-        return (
+      {Object.entries(props.options).map((item, index) => (
           <MenuItem
             key={index}
             value={item[1]}
           >{item[1]}</MenuItem>
-        )
-      })}
+      ))}
     </Select>
   </div >
 )
