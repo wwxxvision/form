@@ -4,7 +4,7 @@ import api from '../api';
 
 function Group(props) {
   return (
-    <div className="form_groups wrapper full_width">
+    <div className="form_groups wrapper full_width animate_group">
       <h2 className="title_group full_width">{props.data.title}</h2>
       {props.data.type !== 'hidden' &&
         props.data.data.map((item, index) => 

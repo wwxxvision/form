@@ -15,6 +15,13 @@ class Element extends React.Component {
       complete: false
     }
   }
+  focusCount = (e) => {
+    if (this.props.data.data.name === 'count' && !this.state.valueInput) {
+      this.setState({
+        valueInput: 1
+      })
+    }
+  }
   addModel = (value) => {
     let addModelToRedux = { ...this.props.toReduxValue };
     addModelToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
@@ -50,7 +57,6 @@ class Element extends React.Component {
     })
   }
   changeValue = (e) => {
-    console.log(e.target.value)
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
@@ -73,7 +79,7 @@ class Element extends React.Component {
       toReduxValue.data[this.props.keyGroup].data.forEach((dataValue) => {
         if (!dataValue.data.dependence && dataValue.type !== 'hidden') {
           const getKeyByValue = (obj, value) => Object.keys(obj).find(key => obj[key] === value);
-          const id = getKeyByValue(dataValue.data.options, dataValue.data.value);
+          const id = dataValue.data.value;
           formData.append(`${dataValue.data.name}[]`, id)
           dataValue.data.value ? goSend = true : goSend = false;
         }
@@ -183,7 +189,7 @@ class Element extends React.Component {
         })
       }
     }
-    else if (dataApi.name === 'count') {
+    else if (dataApi.name === 'count' && this.props.stateValue) {
       const callBackCost = (def) => {
         let countValueToRedux = { ...this.props.newReduxValues };
         countValueToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
@@ -211,6 +217,7 @@ class Element extends React.Component {
         }, (() => {
           callBackCost(true);
         }));
+        e.target.value = 1;
       }
     }
   }
@@ -219,9 +226,14 @@ class Element extends React.Component {
       case 'text':
         return (
           <React.Fragment>
-            <Components.text value={this.props.data.data.value} valueInput={this.state.valueInput} label={this.props.data.data.label} changeValue={this.changeValue}
+            <Components.text value={this.props.data.data.value}
+              valueInput={this.state.valueInput}
+              label={this.props.data.data.label}
+              changeValue={this.changeValue}
               name={this.props.data.data.name}
+              value={this.props.data.data.value}
               validation={this.state.isError}
+              focusCount={this.focusCount}
               required={this.props.data.data.required} helpList={this.state.helpList} />
             {this.props.data.data.name === 'model' && this.state.helpList &&
               <div className="help_list">
@@ -241,21 +253,25 @@ class Element extends React.Component {
           options={this.props.data.data.options}
           validation={this.state.isError}
           label={this.props.data.data.label}
+          isError={this.props.isError}
         />
       case 'date':
         return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
           valueInput={this.state.valueInput}
+          value={this.props.data.data.value}
           required={this.props.data.data.required} />
       case 'date_list':
         return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
           valueInput={this.state.valueInput}
+          value={this.props.data.data.value}
           required={this.props.data.data.required} />
       case 'textarea':
         return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
           valueInput={this.state.valueInput}
           validation={this.state.isError}
+          value={this.props.data.data.value}
         />
       case 'hidden':
         return <Components.hidden label={this.props.data.data.label} />

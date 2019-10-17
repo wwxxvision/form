@@ -28,17 +28,8 @@ const api = {
       method: 'GET'
     })
       .then(res => res.json())
-      .then(res => api.clearObject = res.data.filter((item) => item.type !== 'hidden'))
+      .then(res => api.clearObject = clone(res.data.filter((item) => item.type !== 'hidden')))
   }),
-  resetDataObject: (object, pathToGroup) => {
-    const resetValue = (value) => {
-      value.data.forEach((item, i) => {
-        item.data.value = ''
-        return item
-      })
-    }
-    return resetValue(object);
-  },
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
     return fetch(`${APIURL + step}`, {
@@ -52,7 +43,6 @@ const api = {
       body: objectTosend
     })
       .then(res => res.json())
-      .then(res => console.log(res))
   },
   getRefElement: (apiPageData = {}, path = [], uiValue) => {
     const getValue = (value) => {
@@ -85,6 +75,12 @@ const api = {
 
     return className;
   },
+  isError: false,
+  validation: (outSideValue, isErr) => {
+      if (isErr) {
+        return outSideValue ? '' : 'error_empty';
+      }
+  } 
 };
 
 export default api;

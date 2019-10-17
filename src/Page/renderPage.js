@@ -3,31 +3,55 @@ import preloaders from '../images/preloader.gif';
 import api from '../api';
 import Group from './group';
 import Controllers from '../components/contollers';
+import loaderBtn from '../images/preload_btn.gif';
 class RenderPages extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoad: false,
-      indexes: []
+      indexes: [],
+      isSaveProgress: false
     }
   }
   changePage = (e) => {
-    fetch('')
+    let classItem = e.target;
     let page = this.props.page;
     let sendObject = JSON.stringify({
-        data: this.props.apiPage.data,
-        type: 'section',
-        method: 'save',
-        page: page
+      data: this.props.apiPage.data,
+      type: 'section',
+      method: 'save',
+      page: page
+    });
+    this.setState({
+      isSaveProgress: true
     })
-    api.saveData(sendObject);
-    e.target.classList.contains('back_button') ? (page -= 1) : (page += 1);
-    api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
-      this.props.setRedux({ apiPage: res });
-      this.setState({ isLoad: false });
-      this.props.setRedux({ page });
+    let response = api.saveData(sendObject);
+    response.then((res) => {
+      res.errors ? this.props.setRedux({
+        isError: true
+      }) : this.props.setRedux({
+        isError: false
+      })
+      this.setState({
+        isSaveProgress: false
+      })
+      console.log(res)
     })
-    api.getClearObject(page);
+    if (!this.props.isError) {
+      classItem.classList.contains('back_button') ? (page -= 1) : (page += 1);
+      api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
+        this.props.setRedux({ apiPage: res });
+        this.setState({ isLoad: false });
+        this.props.setRedux({ page });
+      })
+      api.getClearObject(page);
+    }
+    // e.target.classList.contains('back_button') ? (page -= 1) : (page += 1);
+    // api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
+    //   this.props.setRedux({ apiPage: res });
+    //   this.setState({ isLoad: false });
+    //   this.props.setRedux({ page });
+    // })
   }
   render() {
     return (
@@ -36,12 +60,15 @@ class RenderPages extends React.Component {
           <div className="form_page flex_center">
             <h1 className="form__title">Регистрация проектов</h1>
             <div className="form_block">
+              {this.props.isError &&
+                <span className="error_message">Не все поля заполнены</span>
+              }
               {this.props.apiPage.data.map((item, index) => {
                 if (item && item.type !== 'hidden') {
                   return (
                     <React.Fragment key={index + 'fragment'} >
                       <Group path={[index]} key={index} indexGroup={index} data={item} />
-                      <Controllers fields={item.data}  type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
+                      <Controllers fields={item.data} type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
                     </React.Fragment>
                   )
                 }
@@ -51,12 +78,15 @@ class RenderPages extends React.Component {
               })
               }
             </div>
-            {this.props.page === 0 &&
+            {this.props.page === 0 && !this.state.isSaveProgress &&
               <div onClick={this.changePage} className="button next_button" variant="contained">
                 Далее
-            </div>
+              </div>
             }
-            {this.props.page === 1 &&
+            {this.props.page === 0 && this.state.isSaveProgress &&
+              <img src={loaderBtn} alt="btn_loader" className="loader_button" />
+            }
+            {this.props.page === 1 && !this.state.isSaveProgress &&
               <div className="flex mg_top_btns">
                 <div onClick={this.changePage} className="button next_button" variant="contained">
                   Далее
@@ -66,10 +96,16 @@ class RenderPages extends React.Component {
                 </div>
               </div>
             }
-            {this.props.page === 2 &&
+            {this.props.page === 1 && this.state.isSaveProgress &&
+              <img src={loaderBtn} alt="btn_loader" className="loader_button" />
+            }
+            {this.props.page === 2 && !this.state.isSaveProgress &&
               <div onClick={this.changePage} className="button back_button" variant="contained">
                 Назад
               </div>
+            }
+            {this.props.page === 2 && this.state.isSaveProgress &&
+              <img src={loaderBtn} alt="btn_loader" className="loader_button" />
             }
           </div>
         }
