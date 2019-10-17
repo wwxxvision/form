@@ -2,7 +2,7 @@ import React from 'react';
 import api from '../api';
 class DeleteItem extends React.Component {
   removeElementAds = () => {
-    let deleteStateToRedux = {...this.props.addStateToRedux};
+    let deleteStateToRedux = this.props.addStateToRedux ? {...this.props.addStateToRedux} : {...this.props.apiPage};
     delete deleteStateToRedux.data[this.props.newPath];
     this.props.setRedux({
       deleteStateToRedux

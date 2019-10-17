@@ -15,6 +15,13 @@ class Element extends React.Component {
       complete: false
     }
   }
+  componentDidMount() {
+    if (this.props.data.data.value) {
+      this.setState({
+        valueInput: this.props.data.data.value
+      })
+    }
+  }
   focusCount = (e) => {
     if (this.props.data.data.name === 'count' && !this.state.valueInput) {
       this.setState({
@@ -41,7 +48,7 @@ class Element extends React.Component {
             addModelToRedux
           });
         case 'model':
-          el.data.value = value.model;
+          el.data.value = value.id;
           this.setState({
             valueInput: value.model
           })
@@ -78,7 +85,6 @@ class Element extends React.Component {
       let goSend = false;
       toReduxValue.data[this.props.keyGroup].data.forEach((dataValue) => {
         if (!dataValue.data.dependence && dataValue.type !== 'hidden') {
-          const getKeyByValue = (obj, value) => Object.keys(obj).find(key => obj[key] === value);
           const id = dataValue.data.value;
           formData.append(`${dataValue.data.name}[]`, id)
           dataValue.data.value ? goSend = true : goSend = false;
@@ -95,8 +101,7 @@ class Element extends React.Component {
             dependenceValues.data[this.props.keyGroup].data.map((dataValue, index) => {
               if (dataValue.data.dependence) {
                 let apiRes = res.fields.distributors[0].options;
-                dependenceValues.data[this.props.keyGroup].data[index].data.options = apiRes
-                console.log(Object.entries(apiRes))
+                dependenceValues.data[this.props.keyGroup].data[index].data.options = apiRes;
                 this.props.setRedux({
                   dependenceValues
                 });
@@ -154,6 +159,14 @@ class Element extends React.Component {
                   return this.props.setRedux({
                     newReduxValues
                   });
+                case 'model':
+                  el.data.value = this.state.current.id
+                  this.setState({
+                    valueInput:  el.data.value
+                  })
+                  return this.props.setRedux({
+                    newReduxValues
+                  });
                 default:
               }
               return this.props.newReduxValues;
@@ -165,7 +178,6 @@ class Element extends React.Component {
         removeToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
           switch (el.data.name) {
             case 'cost':
-              console.log(true)
               el.data.value = '';
               let stateValue = el.data.value;
               this.props.setRedux({
@@ -196,7 +208,7 @@ class Element extends React.Component {
           if (el.data.name === 'cost') {
             if (el.data.value) {
               let old = this.props.stateValue;
-              !def ? el.data.value = old * this.state.valueInput : el.data.value = old
+              !def ? el.data.value = old * this.state.valueInput : el.data.value = old;
             }
           }
           return this.props.setRedux({
@@ -226,13 +238,22 @@ class Element extends React.Component {
       case 'text':
         return (
           <React.Fragment>
-            <Components.text value={this.props.data.data.value}
+            {this.props.isError && this.props.typeError && 
+              this.props.typeError.map((element) => {
+                let errorType = Object.keys(element.data).filter((filtItem) => this.props.data.data.name === filtItem);
+                return (
+                  <p class="error_message">{element.data[errorType]}</p>
+                )
+              })
+            }
+            <Components.text 
               valueInput={this.state.valueInput}
               label={this.props.data.data.label}
               changeValue={this.changeValue}
               name={this.props.data.data.name}
               value={this.props.data.data.value}
               validation={this.state.isError}
+              isError={this.props.isError}
               focusCount={this.focusCount}
               required={this.props.data.data.required} helpList={this.state.helpList} />
             {this.props.data.data.name === 'model' && this.state.helpList &&
@@ -259,17 +280,20 @@ class Element extends React.Component {
         return <Components.date label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
           valueInput={this.state.valueInput}
+          isError={this.props.isError}
           value={this.props.data.data.value}
           required={this.props.data.data.required} />
       case 'date_list':
         return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
           validation={this.state.isError}
+          isError={this.props.isError}
           valueInput={this.state.valueInput}
           value={this.props.data.data.value}
           required={this.props.data.data.required} />
       case 'textarea':
         return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
           valueInput={this.state.valueInput}
+          isError={this.props.isError}
           validation={this.state.isError}
           value={this.props.data.data.value}
         />

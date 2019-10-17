@@ -11,7 +11,7 @@ const whithoutType = (state) => {
   return newState;
 }
 const APIURL = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?page=';
-
+const APIURL_EMPTY = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?method=get_empty&page=';
 const api = {
   url: APIURL,
   connect: (component_) => {
@@ -23,8 +23,7 @@ const api = {
   },
   clearObject: {},
   getClearObject: ((step) => {
-    console.log(step)
-    return fetch(`${APIURL + step}`, {
+    return fetch(`${APIURL_EMPTY + step}`, {
       method: 'GET'
     })
       .then(res => res.json())

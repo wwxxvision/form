@@ -16,10 +16,6 @@ class Form extends React.Component {
         <div className="wrapper">
           <div className="flex wrapper_loader">
             <img src={preloaders} alt="preloader" className="preloader" />
-            {!this.props.apiPage.error &&
-              <>
-                <p className="preloader_text">Загрузка</p>
-              </>}
             {this.props.apiPage.error &&
               <>
                 <p className="preloader_text">Ошибка на сервере</p>
