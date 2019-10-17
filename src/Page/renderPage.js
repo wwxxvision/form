@@ -53,6 +53,18 @@ class RenderPages extends React.Component {
         }
       })
     }
+    else {
+      classItem.classList.contains('back_button') ? (page -= 1) : (page < 2 ? page += 1 : page = 0);
+      api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
+        this.props.setRedux({ apiPage: res });
+        this.setState({ isLoad: false });
+        this.props.setRedux({ page });
+        this.setState({
+          isSaveProgress: false
+        })
+      })
+      api.getClearObject(page);
+    }
   }
   render() {
     return (
