@@ -97,14 +97,9 @@ const api = {
     //   }
     //   return willClone.data
     // })
-    return {
-      data: willClone.data,
-      duplicate: willClone.duplicate,
-      name: willClone.name,
-      title: willClone.title,
-      type: willClone.type,
-      uid: willClone.uid
-    }
+    let a = JSON.stringify(item);
+    let b =   JSON.parse(a);
+    return b;
   } 
 };
 

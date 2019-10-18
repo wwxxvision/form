@@ -46,7 +46,6 @@ class AddItem extends React.Component {
     // this.props.setRedux({
     //   addStateToRedux
     // });
-    let depthClone = clone(api.clearObject); 
     let curInd = 0;
     const getLayer = (value) => {
       for (let i = 0; i < this.props.path.length; i++) {
@@ -65,11 +64,10 @@ class AddItem extends React.Component {
       }
       return value;
     }
-    console.log(clone(api.pureObject(getLayer(addStateToRedux))))
-    let clon = clone(api.pureObject(getLayer(addStateToRedux)));
+    let clon = JSON.parse(JSON.stringify(api.pureObject(getLayer(addStateToRedux))));
     // !this.props.subGroup ? api.clearObject.data.splice(curInd + 1, 0, clon) : getLayersGroups(api.clearObject).data.splice(curInd + 1, 0, clon);
     // clon.duplicate = true;
-    !this.props.subGroup ? clone(addStateToRedux.data.splice(curInd + 1, 0, clon)) : clone(getLayersGroups(addStateToRedux).data.push(clon));
+    !this.props.subGroup ? addStateToRedux.data.splice(curInd + 1, 0, clon) : getLayersGroups(addStateToRedux).data.push(clon);
     this.props.setRedux({
       addStateToRedux
     });
