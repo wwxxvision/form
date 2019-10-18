@@ -14,7 +14,7 @@ const APIURL = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?page='
 const APIURL_EMPTY = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?method=get_empty&page=';
 const paramsUrl = document.querySelector('.local_form_properties') ? document.querySelector('.local_form_properties') : undefined;
 let dataUrl = paramsUrl ? paramsUrl.getAttribute('data-url') : undefined;
-let dataProjectId = paramsUrl ? paramsUrl.getAttribute('data-project_id-url') : undefined;
+let dataProjectId = paramsUrl ? paramsUrl.getAttribute('data-project_id') : undefined;
 const api = {
   url: APIURL,
   connect: (component_) => {
@@ -34,7 +34,7 @@ const api = {
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
-    return fetch(!paramsUrl ?`${APIURL + step}` : `${APIURL + step}?method=get&project_id=${dataProjectId}`, {
+    return fetch(!paramsUrl ?`${APIURL + step}` : `${APIURL + step}&method=get&project_id=${dataProjectId}`, {
       method: 'GET'
     })
       .then(res => res.json())

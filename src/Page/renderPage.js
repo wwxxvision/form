@@ -73,9 +73,6 @@ class RenderPages extends React.Component {
           <div className="form_page flex_center">
             <h1 className="form__title">Регистрация проектов</h1>
             <div className="form_block">
-              {this.props.isError &&
-                <span className="error_message">Не все поля заполнены</span>
-              }
               {this.props.apiPage.data.map((item, index) => {
                 if (item && item.type !== 'hidden') {
                   return (
@@ -113,10 +110,8 @@ class RenderPages extends React.Component {
               <img src={preloaders} alt="btn_loader" className="loader_button" />
             }
             {this.props.page === 2 && !this.state.isSaveProgress &&
-              <div className="flex mg_top_btns">
-                <div onClick={this.changePage} className="button next_button" variant="contained">
-                  Отправить
-             </div>
+              <div className="pure_flex mg_top_btns">
+                <div onClick={this.changePage} className="button next_button send" variant="contained"></div>
                 <div onClick={this.changePage} className="button left_btn_margin back_button " variant="contained">
                   Назад
              </div>

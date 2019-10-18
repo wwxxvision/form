@@ -5,11 +5,21 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 export default (props) => (
   // className={api.setClasses(['full_width', 'select'], { hidden: props.options })}
-  <div className={api.setClasses(['full_width', 'select'], { hidden: props.options == false , error: props.validation && props.required })}>
-    <p className={`form_label ${api.validation(props.value, props.isError)}`}>{props.label}</p>
+  <div className={api.setClasses(['full_width', 'select'], { hidden: props.options == false })}>
+    <p className="form_label"></p>
+    {props.isError && props.typeError &&
+      props.typeError.map((type, index) => {
+        if (type.uid === `distributor_info_distributors_${props.indxGroup}`) {
+          return (
+              <span key={index} className="error_message">{type.error}</span>         
+          )
+        }
+        return false;
+      })
+    }
     <Select
       onChange={props.changeValue}
-      className={`full_width ${api.validation(props.value, props.isError)}`}
+      className="full_width"
       value={!props.valueInput ? props.value : props.valueInput}
       required={props.required ? true : false}
     >

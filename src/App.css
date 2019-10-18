@@ -24,6 +24,9 @@
   align-items: center;
   flex-direction: column;
 }
+.pure_flex {
+  display: flex;
+}
 .flex {
   display: flex;
   align-items: baseline;
@@ -54,6 +57,7 @@
   display: flex;
   overflow: hidden;
   flex-direction: column;
+  animation: goOpacity 0.5s ease-in;
   align-items: center;
   padding: 30px;
   margin-top: 20px;
@@ -98,7 +102,6 @@
 .form_label{ 
   font-family: Roboto;
   color: #134576;
-  font-weight: bold;
 }
 .MuiSelect-select  {
   color: #134576!important;
@@ -249,6 +252,20 @@ p.error_empty {
 }
 .wrapper_loader, .full_screen {
   height: 100%;
+}
+span.error_message + div {
+  border-bottom: 1px solid #FF0000!important;
+}
+.send::after {
+  content: '';
+  color: #003d5c;
+  position: absolute;
+  width: 14px;
+  height: 8px;
+  border-bottom: solid 1px currentColor;
+  border-left: solid 1px currentColor;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
 }
 @media (max-width: 1025px) {
   .full_screen {

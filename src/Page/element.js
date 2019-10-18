@@ -71,11 +71,6 @@ class Element extends React.Component {
       this.setState({
         valueInput: e.target.value,
       });
-      !e.target.value ? (this.setState({
-        isError: true
-      })) : (this.setState({
-        isError: false
-      }));
       api.getRefElement(toReduxValue, this.props.path, e.target.value);
       this.props.setRedux({
         toReduxValue
@@ -159,14 +154,6 @@ class Element extends React.Component {
                   return this.props.setRedux({
                     newReduxValues
                   });
-                case 'model':
-                  el.data.value = this.state.current.id
-                  this.setState({
-                    valueInput:  el.data.value
-                  })
-                  return this.props.setRedux({
-                    newReduxValues
-                  });
                 default:
               }
               return this.props.newReduxValues;
@@ -238,22 +225,15 @@ class Element extends React.Component {
       case 'text':
         return (
           <React.Fragment>
-            {this.props.isError && this.props.typeError && 
-              this.props.typeError.map((element) => {
-                let errorType = Object.keys(element.data).filter((filtItem) => this.props.data.data.name === filtItem);
-                return (
-                  <p class="error_message">{element.data[errorType]}</p>
-                )
-              })
-            }
             <Components.text 
               valueInput={this.state.valueInput}
               label={this.props.data.data.label}
               changeValue={this.changeValue}
               name={this.props.data.data.name}
               value={this.props.data.data.value}
-              validation={this.state.isError}
+              uid={this.props.data.data.uid}
               isError={this.props.isError}
+              typeError={this.props.typeError}
               focusCount={this.focusCount}
               required={this.props.data.data.required} helpList={this.state.helpList} />
             {this.props.data.data.name === 'model' && this.state.helpList &&
@@ -272,7 +252,9 @@ class Element extends React.Component {
           dependence={this.props.data.data.dependence}
           required={this.props.data.data.required}
           options={this.props.data.data.options}
-          validation={this.state.isError}
+          uid={this.props.data.data.uid}
+          typeError={this.props.typeError}
+          indxGroup={this.props.keyGroup}
           label={this.props.data.data.label}
           isError={this.props.isError}
         />
@@ -282,6 +264,8 @@ class Element extends React.Component {
           valueInput={this.state.valueInput}
           isError={this.props.isError}
           value={this.props.data.data.value}
+          uid={this.props.data.data.uid}
+          typeError={this.props.typeError}
           required={this.props.data.data.required} />
       case 'date_list':
         return <Components.date_list label={this.props.data.data.label} changeValue={this.changeValue} name={this.props.data.data.name}
@@ -289,12 +273,16 @@ class Element extends React.Component {
           isError={this.props.isError}
           valueInput={this.state.valueInput}
           value={this.props.data.data.value}
+          uid={this.props.data.data.uid}
+          typeError={this.props.typeError}
           required={this.props.data.data.required} />
       case 'textarea':
         return <Components.textarea label={this.props.data.data.label} changeValue={this.changeValue} required={this.props.data.data.required}
           valueInput={this.state.valueInput}
           isError={this.props.isError}
           validation={this.state.isError}
+          uid={this.props.data.data.uid}
+          typeError={this.props.typeError}
           value={this.props.data.data.value}
         />
       case 'hidden':
