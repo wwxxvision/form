@@ -57,7 +57,7 @@
   display: flex;
   overflow: hidden;
   flex-direction: column;
-  animation: goOpacity 0.5s ease-in;
+  animation: goOpacity 0.7s ease-in;
   align-items: center;
   padding: 30px;
   margin-top: 20px;
@@ -182,13 +182,13 @@
   border-radius: 4px;
   min-width: 70px;
   height: 45px;
+  animation: showAdd 0.5s ease-in;
   font-size: 16px;
   font-family: Roboto;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  animation: goOpacity 1s ease-in;
   color: #003d5c;
   margin-bottom: 20px;
   margin-top: 20px;

@@ -62,6 +62,9 @@ class RenderPages extends React.Component {
         this.setState({
           isSaveProgress: false
         })
+        if (this.props.page === 2 && api.redirectUrl) {
+          window.location.href = api.redirectUrl;
+        }
       })
       api.getClearObject(page);
     }
@@ -78,7 +81,7 @@ class RenderPages extends React.Component {
                   return (
                     <React.Fragment key={index + 'fragment'} >
                       <Group path={[index]} key={index} indexGroup={index} data={item} />
-                      <Controllers fields={item.data} type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
+                      <Controllers path={[index]} fields={item.data} type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
                     </React.Fragment>
                   )
                 }

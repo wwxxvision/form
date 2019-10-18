@@ -3,6 +3,7 @@ import api from '../api';
 import Components from '../components';
 import Group from './group';
 import HelpList from '../Page/helpList';
+import Controllers from '../components/contollers';
 class Element extends React.Component {
   constructor(props) {
     super(props);
@@ -48,10 +49,15 @@ class Element extends React.Component {
             addModelToRedux
           });
         case 'model':
-          el.data.value = value.id;
+          el.data.value = value.model;
           this.setState({
             valueInput: value.model
           })
+          return this.props.setRedux({
+            addModelToRedux
+          });
+        case 'product_id':
+          el.data.value = value.id;
           return this.props.setRedux({
             addModelToRedux
           });
@@ -149,6 +155,11 @@ class Element extends React.Component {
                   return this.props.setRedux({
                     newReduxValues
                   });
+                case 'product_id':
+                  el.data.value = this.state.current.id;
+                  return this.props.setRedux({
+                    newReduxValues
+                  });
                 case 'name':
                   el.data.value = this.state.current.name;
                   return this.props.setRedux({
@@ -160,8 +171,8 @@ class Element extends React.Component {
             })
           }
         })
-      if ((e.target.value !== this.state.current.name && this.state.complete) || !e.target.value) {
-        let removeToRedux = { ...this.props.newReduxValues };
+      if ((e.target.value !== this.state.current.name && this.state.complete) || !e.target.value && this.props.newReduxValues) {
+        let removeToRedux = this.props.newReduxValues ? { ...this.props.newReduxValues } : { ...this.props.toReduxValue };
         removeToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
           switch (el.data.name) {
             case 'cost':
@@ -190,7 +201,7 @@ class Element extends React.Component {
     }
     else if (dataApi.name === 'count' && this.props.stateValue) {
       const callBackCost = (def) => {
-        let countValueToRedux = { ...this.props.newReduxValues };
+        let countValueToRedux = this.props.newReduxValues ? { ...this.props.newReduxValues } : { ...this.props.addModelToRedux };
         countValueToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
           if (el.data.name === 'cost') {
             if (el.data.value) {
@@ -225,7 +236,7 @@ class Element extends React.Component {
       case 'text':
         return (
           <React.Fragment>
-            <Components.text 
+            <Components.text
               valueInput={this.state.valueInput}
               label={this.props.data.data.label}
               changeValue={this.changeValue}
@@ -288,7 +299,14 @@ class Element extends React.Component {
       case 'hidden':
         return <Components.hidden label={this.props.data.data.label} />
       case 'group':
-        return <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
+        return (
+          <React.Fragment>
+            <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
+            {this.props.data.data.name !== 'delivery_list' && this.props.data.data.name !== 'total_delivery_list' &&
+              <Controllers path={[...this.props.path]} subGroup={true} indexEl={this.props.indexEl} dataApi={this.props.apiPage} index={this.props.path[0]} />
+            }
+          </React.Fragment>
+        )
       default:
         return <Components.default_c type={this.props.data.data.type} />
     }

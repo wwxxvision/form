@@ -9,10 +9,10 @@ class Controllers extends React.Component {
   render() {
     return (
       <div className="flex">
-        <AddItem  fields={this.props.fields} type={this.props.type} dataApi={this.props.dataApi} newPath={this.props.index} />
+        <AddItem indexEl={this.props.indexEl} path={this.props.path} subGroup={this.props.subGroup} dataApi={this.props.dataApi} newPath={this.props.index} />
         {this.props.dataApi.data[this.props.index].duplicate &&
           <React.Fragment  >
-            <DeleteItem dataApi={this.props.dataApi} newPath={this.props.index} />
+            <DeleteItem subGroup={this.props.subGroup} dataApi={this.props.dataApi} newPath={this.props.index} />
           </React.Fragment>
         }
       </div>

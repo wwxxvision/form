@@ -30,7 +30,7 @@ const api = {
       method: 'GET'
     })
       .then(res => res.json())
-      .then(res => api.clearObject = clone(res.data.filter((item) => item.type !== 'hidden')))
+      .then(res => api.clearObject = clone(res))
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
@@ -82,7 +82,8 @@ const api = {
       if (isErr) {
         return outSideValue ? '' : 'error_empty';
       }
-  } 
+  },
+  redirectUrl: dataUrl
 };
 
 export default api;
