@@ -1,12 +1,10 @@
 import React from 'react';
 import api from '../api';
 import clone from 'clone';
+
 class AddItem extends React.Component {
   addingItem = () => {
     let addStateToRedux = { ...this.props.apiPage };
-    let newItem = clone(this.props.newPath);
-    let depthClone = clone(api.clearObject);
-    console.log(this.props.path)
     // let veryDepthClone = depthClone.data.filter((item) => item.type !== 'hidden');
     // if (!this.props.subGroup) {
     //   veryDepthClone.map((object) => {
@@ -25,27 +23,56 @@ class AddItem extends React.Component {
     //   })
     // }
     // else {
-      let currentInd = 0;
-      const getValue = (value) => {
-        for (let i = 0; i < this.props.path.length; i++) {
-          value = value.data[this.props.path[i]]
-          currentInd = i;
+    // let currentInd = 0;
+    // const getValue = (value) => {
+    //   for (let i = 0; i < this.props.path.length; i++) {
+    //     console.log(value)
+    //     if (value.data[this.props.path[i]].type !== 'hidden') {
+    //       value = value.data[this.props.path[i]]
+    //       currentInd = i;
+    //     }
+    //   }
+    //   return value;
+    // }
+    // let willDuplicateEl = getValue(depthClone);
+    // willDuplicateEl.duplicate = true;
+    // const getLayer = (value) => {
+    //   for (let i = 0; i < this.props.path.length; i++) {
+    //     value = value.data[this.props.path[i]];
+    //   }
+    //   return value;
+    // }
+    // getLayer(addStateToRedux).data.push(willDuplicateEl);
+    // this.props.setRedux({
+    //   addStateToRedux
+    // });
+    let depthClone = clone(api.clearObject); 
+    let curInd = 0;
+    const getLayer = (value) => {
+      for (let i = 0; i < this.props.path.length; i++) {
+        if (value.data[this.props.path[i]].data.type !== 'hidden') {
+          value = value.data[this.props.path[i]];
+          curInd = i;
         }
-        return value;
       }
-      let willDuplicateEl = getValue(depthClone);
-      willDuplicateEl.duplicate = true;
-      const getLayer = (value) => {
-        for (let i = 0; i < this.props.path.length; i++) {
+      return value;
+    }
+    const getLayersGroups = (value) => {
+      for (let i = 0; i < this.props.path.length - 1; i++) {
+        if (value.data[this.props.path[i]].data.type !== 'hidden') {
           value = value.data[this.props.path[i]];
         }
-        return value;
       }
-      let whereWillDuplicate = getLayer(addStateToRedux);
-      whereWillDuplicate.data.splice(currentInd - 1, 0, willDuplicateEl);
-      this.props.setRedux({
-        addStateToRedux
-      });
+      return value;
+    }
+    console.log(clone(api.pureObject(getLayer(addStateToRedux))))
+    let clon = clone(api.pureObject(getLayer(addStateToRedux)));
+    // !this.props.subGroup ? api.clearObject.data.splice(curInd + 1, 0, clon) : getLayersGroups(api.clearObject).data.splice(curInd + 1, 0, clon);
+    // clon.duplicate = true;
+    !this.props.subGroup ? clone(addStateToRedux.data.splice(curInd + 1, 0, clon)) : clone(getLayersGroups(addStateToRedux).data.push(clon));
+    this.props.setRedux({
+      addStateToRedux
+    });
   }
   render() {
     return (

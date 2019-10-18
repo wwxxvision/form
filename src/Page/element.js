@@ -117,6 +117,7 @@ class Element extends React.Component {
       setDependeces();
     }
     else if (dataApi.name === 'model') {
+      console.log(this.props.path)
       formData.append('model', e.target.value)
       fetch(`${api.url}`, {
         method: 'POST',
@@ -302,9 +303,7 @@ class Element extends React.Component {
         return (
           <React.Fragment>
             <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-            {this.props.data.data.name !== 'delivery_list' && this.props.data.data.name !== 'total_delivery_list' &&
-              <Controllers path={[...this.props.path]} subGroup={true} indexEl={this.props.indexEl} dataApi={this.props.apiPage} index={this.props.path[0]} />
-            }
+              <Controllers subGroup={true} path={[...this.props.path]} duplicate={this.props.data.data.duplicate} dataApi={this.props.apiPage} index={this.props.path[0]} />
           </React.Fragment>
         )
       default:

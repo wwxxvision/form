@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
-import clone from 'clone';
+import clone from 'clone'
 const whithoutType = (state) => {
   let newState = {};
   Object.keys(state).forEach((key) => {
@@ -83,7 +83,29 @@ const api = {
         return outSideValue ? '' : 'error_empty';
       }
   },
-  redirectUrl: dataUrl
+  redirectUrl: dataUrl,
+  pureObject: (item) => {
+    // let willFilter = item.data.filter((filterEl) => filterEl.type !== 'hidden');
+    let willClone = clone(item);
+    // willClone.data.map((willMap) => {
+    //   willMap.data.value = '';
+    //   if (Array.isArray(willMap.data)) {
+    //     willMap.data.map((wrapperWillMap) => {
+    //        wrapperWillMap.data.value = ''
+    //        return willClone.data
+    //     })
+    //   }
+    //   return willClone.data
+    // })
+    return {
+      data: willClone.data,
+      duplicate: willClone.duplicate,
+      name: willClone.name,
+      title: willClone.title,
+      type: willClone.type,
+      uid: willClone.uid
+    }
+  } 
 };
 
 export default api;
