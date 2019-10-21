@@ -15,10 +15,6 @@
     opacity: 1;
   }
 }
-.App {
-  display: flex;
-  flex-direction: column;
-}
 .flex_center {
   display: flex;
   align-items: center;

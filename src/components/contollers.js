@@ -3,9 +3,6 @@ import api from '../api';
 import DeleteItem from './deleteItem';
 import AddItem from './addItem';
 class Controllers extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return (
       <div className="flex">

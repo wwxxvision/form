@@ -34,7 +34,7 @@ const api = {
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
-    return fetch(!paramsUrl ?`${APIURL + step}` : `${APIURL + step}&method=get&project_id=${dataProjectId}`, {
+    return fetch(!paramsUrl ? `${APIURL + step}` : `${APIURL + step}&method=get&project_id=${dataProjectId}`, {
       method: 'GET'
     })
       .then(res => res.json())
@@ -79,28 +79,89 @@ const api = {
   },
   isError: false,
   validation: (outSideValue, isErr) => {
-      if (isErr) {
-        return outSideValue ? '' : 'error_empty';
+    if (isErr) {
+      return outSideValue ? '' : 'error_empty';
+    }
+  },
+  setBeforeResData: (whereChangeVal, path, current, isClean) => {
+    return new Promise((resolve) => {
+      const getValue = (value) => {
+        for (let i = 0; i < path.length - 1; i++) {
+          value = value.data[path[i]];
+        }
+        value.data.map((extraDeep) => {
+
+          !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
+          return extraDeep
+        })
+        return value
       }
+      return resolve(getValue(whereChangeVal));
+    })
+  },
+  getLocalCost: (whereChangeVal, path, current) => {
+    let cost = 0;
+    const getValue = (value) => {
+      for (let i = 0; i < path.length - 1; i++) {
+        value = value.data[path[i]];
+      }
+      value.data.map((extraDeep) => {
+        if (extraDeep.data.name === 'cost') {
+          cost = current[extraDeep.data.name];
+        }
+        return extraDeep
+      })
+      return cost
+    }
+    return getValue(whereChangeVal);
+  },
+  factorSum: (whereChangeVal, path, staticValue, countFactor) => {
+    const getValue = (value) => {
+      for (let i = 0; i < path.length - 1; i++) {
+        value = value.data[path[i]];
+      }
+      value.data.map((extraDeep) => {
+        if (extraDeep.data.name === 'cost') {
+          extraDeep.data.value = staticValue * countFactor;
+          console.log(extraDeep)
+        }
+        return extraDeep
+      })
+      return value;
+    }
+    return getValue(whereChangeVal);
   },
   redirectUrl: dataUrl,
   pureObject: (item) => {
-    // let willFilter = item.data.filter((filterEl) => filterEl.type !== 'hidden');
-    let willClone = clone(item);
-    // willClone.data.map((willMap) => {
-    //   willMap.data.value = '';
-    //   if (Array.isArray(willMap.data)) {
-    //     willMap.data.map((wrapperWillMap) => {
-    //        wrapperWillMap.data.value = ''
-    //        return willClone.data
-    //     })
+    // console.log(path)
+    // const getLayer = (value) => {
+    //   for (let i = 0; i < path.length; i++) {
+    //     if (value.data[path[i]].data.type !== 'hidden') {
+    //       value = value.data[path[i]];
+    //     }
+    //     value.data.value = '';
     //   }
-    //   return willClone.data
+    //   return value;
+    // }
+    // let copy = clone(item);
+    // copy.data.map((element) => {
+    //   element.data.value = '';
+    //   return element
     // })
-    let a = JSON.stringify(item);
-    let b =   JSON.parse(a);
-    return b;
-  } 
+    // console.log(item)
+    // return copy;
+    let newObj = {};
+    for (let key in item) {
+      newObj[key] = clone(item[key]);
+      if (key === 'data') {
+        newObj[key].map((deepItem) => {
+          deepItem.data.value = '';
+          return newObj;
+        })
+      }
+    }
+    return newObj
+  }
 };
 
 export default api;

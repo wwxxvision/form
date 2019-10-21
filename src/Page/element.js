@@ -13,7 +13,8 @@ class Element extends React.Component {
       current: '',
       currentPrice: 0,
       isError: false,
-      complete: false
+      complete: false,
+      localCost: ''
     }
   }
   componentDidMount() {
@@ -21,6 +22,11 @@ class Element extends React.Component {
       this.setState({
         valueInput: this.props.data.data.value
       })
+      if (this.props.data.data.name === 'cost') {
+        this.setState({
+          localCost: this.props.data.data.value
+        })
+      }
     }
   }
   focusCount = (e) => {
@@ -31,45 +37,18 @@ class Element extends React.Component {
     }
   }
   addModel = (value) => {
-    let addModelToRedux = { ...this.props.toReduxValue };
-    addModelToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
-      switch (el.data.name) {
-        case 'cost':
-          el.data.value = parseInt(value.cost);
-          let stateValue = el.data.value;
-          this.props.setRedux({
-            stateValue
-          })
-          return this.props.setRedux({
-            addModelToRedux
-          });
-        case 'name':
-          el.data.value = value.name;
-          return this.props.setRedux({
-            addModelToRedux
-          });
-        case 'model':
-          el.data.value = value.model;
-          this.setState({
-            valueInput: value.model
-          })
-          return this.props.setRedux({
-            addModelToRedux
-          });
-        case 'product_id':
-          el.data.value = value.id;
-          return this.props.setRedux({
-            addModelToRedux
-          });
-        default:
-      }
-      this.setState({
-        helpList: false
-      })
-      return this.props.newReduxValues;
+    let toReduxValue = { ...this.props.toReduxValue }
+    let getModel = api.setBeforeResData(toReduxValue, this.props.path, value);
+    this.props.setRedux({
+      toReduxValue
     })
+    this.setState({
+      helpList: false
+    })
+    return this.props.toReduxValue;
   }
   changeValue = (e) => {
+    console.log(this.props)
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
@@ -117,7 +96,6 @@ class Element extends React.Component {
       setDependeces();
     }
     else if (dataApi.name === 'model') {
-      console.log(this.props.path)
       formData.append('model', e.target.value)
       fetch(`${api.url}`, {
         method: 'POST',
@@ -142,94 +120,53 @@ class Element extends React.Component {
               return this.state;
             })
           }
-        }).then((res) => {
+        }).then(() => {
           if (this.state.current) {
-            let newReduxValues = { ...this.props.toReduxValue };
-            newReduxValues.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
-              switch (el.data.name) {
-                case 'cost':
-                  el.data.value = parseInt(this.state.current.cost);
-                  let stateValue = el.data.value;
-                  this.props.setRedux({
-                    stateValue
-                  })
-                  return this.props.setRedux({
-                    newReduxValues
-                  });
-                case 'product_id':
-                  el.data.value = this.state.current.id;
-                  return this.props.setRedux({
-                    newReduxValues
-                  });
-                case 'name':
-                  el.data.value = this.state.current.name;
-                  return this.props.setRedux({
-                    newReduxValues
-                  });
-                default:
-              }
-              return this.props.newReduxValues;
+            api.setBeforeResData(toReduxValue, this.props.path, this.state.current)
+            this.setState({
+              localCost: api.getLocalCost(toReduxValue, this.props.path, this.state.current)
+            });
+            this.props.setRedux({
+              toReduxValue
             })
           }
         })
-      if ((e.target.value !== this.state.current.name && this.state.complete) || !e.target.value && this.props.newReduxValues) {
-        let removeToRedux = this.props.newReduxValues ? { ...this.props.newReduxValues } : { ...this.props.toReduxValue };
-        removeToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
-          switch (el.data.name) {
-            case 'cost':
-              el.data.value = '';
-              let stateValue = el.data.value;
-              this.props.setRedux({
-                stateValue
-              })
-              return this.props.setRedux({
-                removeToRedux
-              });
-            case 'name':
-              el.data.value = '';
-              return this.props.setRedux({
-                removeToRedux
-              });
-            default:
-          }
-          this.setState({
-            complete: false,
-            current: ''
-          })
-          return this.props.removeToRedux;
+      if ((e.target.value !== this.state.current.name && this.state.complete) || (!e.target.value && this.props.toReduxValue)) {
+        let getModel = api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true);
+        this.props.setRedux({
+          toReduxValue
         })
+        this.setState({
+          complete: false,
+          current: ''
+        })
+        return this.props.toReduxValue;
       }
     }
-    else if (dataApi.name === 'count' && this.props.stateValue) {
-      const callBackCost = (def) => {
-        let countValueToRedux = this.props.newReduxValues ? { ...this.props.newReduxValues } : { ...this.props.addModelToRedux };
-        countValueToRedux.data[this.props.path[0]].data[this.props.path[1]].data[0].data.map((el) => {
-          if (el.data.name === 'cost') {
-            if (el.data.value) {
-              let old = this.props.stateValue;
-              !def ? el.data.value = old * this.state.valueInput : el.data.value = old;
-            }
-          }
-          return this.props.setRedux({
-            countValueToRedux
-          });
+    else if (dataApi.name === 'count') {
+      // const callBackCost = (def) => {
+        // api.factorSum(toReduxValue, this.props.path, this.state.localCost, this.state.valueInput);
+        this.props.setRedux({
+          toReduxValue
         })
-      }
-      if (e.target.value > 0) {
-        this.setState({
-          valueInput: e.target.value.replace(/\D/, '')
-        }, (() => {
-          callBackCost();
-        }));
-      }
-      else {
-        this.setState({
-          valueInput: 1
-        }, (() => {
-          callBackCost(true);
-        }));
-        e.target.value = 1;
-      }
+        console.log(this.state.localCost)
+      // }
+    //   if (e.target.value > 0) {
+    //     this.setState({
+    //       valueInput: e.target.value.replace(/\D/, '')
+    //     }, (() => {
+    //       callBackCost();
+    //     }));
+    //   }
+    //   else {
+    //     this.setState({
+    //       valueInput: 1
+    //     }, (() => {
+    //       callBackCost(true);
+    //     }));
+    //     e.target.value = 1;
+    //   }
+    // }
     }
   }
   render() {
@@ -303,7 +240,7 @@ class Element extends React.Component {
         return (
           <React.Fragment>
             <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-              <Controllers subGroup={true} path={[...this.props.path]} duplicate={this.props.data.data.duplicate} dataApi={this.props.apiPage} index={this.props.path[0]} />
+            <Controllers subGroup={true} path={[...this.props.path]} duplicate={this.props.data.data.duplicate} dataApi={this.props.apiPage} index={this.props.path[0]} />
           </React.Fragment>
         )
       default:
