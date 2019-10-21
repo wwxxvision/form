@@ -7,9 +7,9 @@ class Controllers extends React.Component {
     return (
       <div className="flex">
         <AddItem  subGroup={this.props.subGroup} indexEl={this.props.indexEl} path={this.props.path}  dataApi={this.props.dataApi} />
-        {this.props.duplicate &&
+        {api.getController(this.props.dataApi, this.props.path).duplicate &&
           <React.Fragment  >
-            <DeleteItem  dataApi={this.props.dataApi}  />
+            <DeleteItem subGroup={this.props.subGroup} indexEl={this.props.indexEl} path={this.props.path}   dataApi={this.props.dataApi}  />
           </React.Fragment>
         }
       </div>

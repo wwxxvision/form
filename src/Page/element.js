@@ -240,7 +240,7 @@ class Element extends React.Component {
         return (
           <React.Fragment>
             <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-            <Controllers subGroup={true} path={[...this.props.path]} duplicate={this.props.data.data.duplicate} dataApi={this.props.apiPage} index={this.props.path[0]} />
+            <Controllers subGroup={true} path={[...this.props.path]}  dataApi={this.props.apiPage} index={this.props.path[0]} />
           </React.Fragment>
         )
       default:

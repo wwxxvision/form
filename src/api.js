@@ -55,6 +55,15 @@ const api = {
     }
     getValue(apiPageData);
   },
+  getController: (apiPageData = {}, path = []) => {
+    const getValue = (value) => {
+      for (let i = 0; i < path.length; i++) {
+        value = value.data[path[i]];
+      }
+      return value
+    }
+    return getValue(apiPageData);
+  },
   setClasses: (defaultClasses = false, isActiveClasses = false) => {
     //defaultClasses = ['className']
     //isActiveClasses = { className: 'condition' }
@@ -151,13 +160,11 @@ const api = {
     // console.log(item)
     // return copy;
     let newObj = {};
+    let copy = {...item};
     for (let key in item) {
-      newObj[key] = clone(item[key]);
-      if (key === 'data') {
-        newObj[key].map((deepItem) => {
-          deepItem.data.value = '';
-          return newObj;
-        })
+      newObj[key] = copy[key];
+      if (key === 'duplicate') {
+        newObj[key] = true;
       }
     }
     return newObj

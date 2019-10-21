@@ -16,7 +16,7 @@ class AddItem extends React.Component {
       return value;
     }
     const getLayersGroups = (value) => {
-      for (let i = 0; i < this.props.path.length - 1; i++) {
+      for (let i = 0; i < this.props.path.length -1; i++) {
         if (value.data[this.props.path[i]].data.type !== 'hidden') {
           value = value.data[this.props.path[i]];
           curInd = i;
@@ -25,9 +25,6 @@ class AddItem extends React.Component {
       return value;
     }
     let clonObj = clone(api.pureObject(getLayer(addStateToRedux)));
-    // !this.props.subGroup ? api.clearObject.data.splice(curInd + 1, 0, clon) : getLayersGroups(api.clearObject).data.splice(curInd + 1, 0, clon);
-    // clon.duplicate = true;
-    // let newArray = addStateToRedux.data.slice();
     !this.props.subGroup ? addStateToRedux.data.splice(curInd + 1, 0, clonObj) : getLayersGroups(addStateToRedux).data.splice(curInd - 1, 0, clonObj);
     this.props.setRedux({
       addStateToRedux
