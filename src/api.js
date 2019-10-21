@@ -93,20 +93,18 @@ const api = {
     }
   },
   setBeforeResData: (whereChangeVal, path, current, isClean) => {
-    return new Promise((resolve) => {
-      const getValue = (value) => {
-        for (let i = 0; i < path.length - 1; i++) {
-          value = value.data[path[i]];
-        }
-        value.data.map((extraDeep) => {
-
-          !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
-          return extraDeep
-        })
-        return value
+    const getValue = (value) => {
+      for (let i = 0; i < path.length - 1; i++) {
+        value = value.data[path[i]];
       }
-      return resolve(getValue(whereChangeVal));
-    })
+      value.data.map((extraDeep) => {
+
+        !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
+        return extraDeep
+      })
+      return value
+    }
+    return getValue(whereChangeVal);
   },
   getLocalCost: (whereChangeVal, path, current) => {
     let cost = 0;
@@ -116,6 +114,7 @@ const api = {
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
+          extraDeep.data.defaultValue = current[extraDeep.data.name];
           cost = current[extraDeep.data.name];
         }
         return extraDeep
@@ -124,14 +123,14 @@ const api = {
     }
     return getValue(whereChangeVal);
   },
-  factorSum: (whereChangeVal, path, staticValue, countFactor) => {
+  factorSum: (whereChangeVal, path, staticValue) => {
     const getValue = (value) => {
       for (let i = 0; i < path.length - 1; i++) {
         value = value.data[path[i]];
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
-          extraDeep.data.value = staticValue * countFactor;
+          extraDeep.data.value = staticValue * extraDeep.data.defaultValue;
           console.log(extraDeep)
         }
         return extraDeep
@@ -160,7 +159,7 @@ const api = {
     // console.log(item)
     // return copy;
     let newObj = {};
-    let copy = {...item};
+    let copy = { ...item };
     for (let key in item) {
       newObj[key] = copy[key];
       if (key === 'duplicate') {
@@ -168,6 +167,46 @@ const api = {
       }
     }
     return newObj
+  },
+  setTotal: (whereChangeVal, path, type) => {
+    let currentCost = 0, whereTotal;
+    const getValue = (value) => {
+      for (let i = 0; i < path.length - 1; i++) {
+        value = value.data[path[i]];
+      }
+      value.data.map((extraDeep) => {
+        if (extraDeep.data.name === 'cost') {
+          currentCost = extraDeep.data.value;
+        }
+        return extraDeep
+      })
+    }
+    const getGlobalgroup = (value) => {
+      getValue(whereChangeVal);
+      for (let i = 0; i < path.length - 2; i++) {
+        value = value.data[path[i]];
+      }
+      value.data.map((extraDeep) => {
+        if (extraDeep.type === 'text') {
+        //  if (!remove) {
+        //   extraDeep.data.value = Number(extraDeep.data.value);
+        //   extraDeep.data.value += Number(currentCost);
+        //  }
+        //  else {
+        //   extraDeep.data.value = Number(extraDeep.data.value);
+        //   extraDeep.data.value -= Number(currentCost);
+        //  }
+          switch(type) {
+            case 'render': {
+              extraDeep.data.value = Number(extraDeep.data.value)
+              extraDeep.data.value += Number(currentCost);
+            }
+          }
+        }
+        return extraDeep
+      })
+    }
+    return getGlobalgroup(whereChangeVal);
   }
 };
 

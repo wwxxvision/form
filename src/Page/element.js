@@ -39,6 +39,7 @@ class Element extends React.Component {
   addModel = (value) => {
     let toReduxValue = { ...this.props.toReduxValue }
     let getModel = api.setBeforeResData(toReduxValue, this.props.path, value);
+    api.setTotal(toReduxValue, this.props.path);
     this.props.setRedux({
       toReduxValue
     })
@@ -48,7 +49,6 @@ class Element extends React.Component {
     return this.props.toReduxValue;
   }
   changeValue = (e) => {
-    console.log(this.props)
     let formData = new FormData();
     let dataApi = this.props.data.data
     let toReduxValue = { ...this.props.apiPage };
@@ -121,17 +121,17 @@ class Element extends React.Component {
             })
           }
         }).then(() => {
-          if (this.state.current) {
-            api.setBeforeResData(toReduxValue, this.props.path, this.state.current)
-            this.setState({
-              localCost: api.getLocalCost(toReduxValue, this.props.path, this.state.current)
-            });
+          if (this.state.current && this.state.complete) {
+            api.setBeforeResData(toReduxValue, this.props.path, this.state.current);
+            api.getLocalCost(toReduxValue, this.props.path, this.state.current);
+            console.log('1')
             this.props.setRedux({
               toReduxValue
             })
           }
         })
       if ((e.target.value !== this.state.current.name && this.state.complete) || (!e.target.value && this.props.toReduxValue)) {
+        api.setTotal(toReduxValue, this.props.path, true);
         let getModel = api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true);
         this.props.setRedux({
           toReduxValue
@@ -144,29 +144,28 @@ class Element extends React.Component {
       }
     }
     else if (dataApi.name === 'count') {
-      // const callBackCost = (def) => {
-        // api.factorSum(toReduxValue, this.props.path, this.state.localCost, this.state.valueInput);
+      const callBackCost = (def) => {
+        api.factorSum(toReduxValue, this.props.path, this.state.valueInput);
+        api.setTotal(toReduxValue, this.props.path);
         this.props.setRedux({
           toReduxValue
         })
-        console.log(this.state.localCost)
-      // }
-    //   if (e.target.value > 0) {
-    //     this.setState({
-    //       valueInput: e.target.value.replace(/\D/, '')
-    //     }, (() => {
-    //       callBackCost();
-    //     }));
-    //   }
-    //   else {
-    //     this.setState({
-    //       valueInput: 1
-    //     }, (() => {
-    //       callBackCost(true);
-    //     }));
-    //     e.target.value = 1;
-    //   }
-    // }
+      }
+      if (e.target.value > 0) {
+        this.setState({
+          valueInput: e.target.value.replace(/\D/, '')
+        }, (() => {
+          callBackCost();
+        }));
+      }
+      else {
+        this.setState({
+          valueInput: 1
+        }, (() => {
+          callBackCost(true);
+        }));
+        e.target.value = 1;
+      }
     }
   }
   render() {
@@ -240,7 +239,7 @@ class Element extends React.Component {
         return (
           <React.Fragment>
             <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-            <Controllers subGroup={true} path={[...this.props.path]}  dataApi={this.props.apiPage} index={this.props.path[0]} />
+            <Controllers subGroup={true} path={[...this.props.path]} dataApi={this.props.apiPage} index={this.props.path[0]} />
           </React.Fragment>
         )
       default:
