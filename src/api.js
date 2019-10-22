@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
-import clone from 'clone'
+import clone from 'clone';
+import { cloneDeep } from 'lodash';
 const whithoutType = (state) => {
   let newState = {};
   Object.keys(state).forEach((key) => {
@@ -15,6 +16,7 @@ const APIURL_EMPTY = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?
 const paramsUrl = document.querySelector('.local_form_properties') ? document.querySelector('.local_form_properties') : undefined;
 let dataUrl = paramsUrl ? paramsUrl.getAttribute('data-url') : undefined;
 let dataProjectId = paramsUrl ? paramsUrl.getAttribute('data-project_id') : undefined;
+const allCosts = [];
 const api = {
   url: APIURL,
   connect: (component_) => {
@@ -97,9 +99,16 @@ const api = {
       for (let i = 0; i < path.length - 1; i++) {
         value = value.data[path[i]];
       }
+      if (current) {
+        current.cost = parseInt(current.cost)
+      }
       value.data.map((extraDeep) => {
-
-        !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
+        if (current) {
+          !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
+        }
+        else {
+          extraDeep.data.value = '';
+        }
         return extraDeep
       })
       return value
@@ -114,8 +123,14 @@ const api = {
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
-          extraDeep.data.defaultValue = current[extraDeep.data.name];
-          cost = current[extraDeep.data.name];
+          if (current) {
+            extraDeep.data.defaultValue = current[extraDeep.data.name];
+            cost = parseInt(current[extraDeep.data.name]);
+          }
+          else {
+            extraDeep.data.defaultValue = '';
+            cost = '';
+          }
         }
         return extraDeep
       })
@@ -130,8 +145,7 @@ const api = {
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
-          extraDeep.data.value = staticValue * extraDeep.data.defaultValue;
-          console.log(extraDeep)
+          extraDeep.data.value = Number(staticValue) * Number(extraDeep.data.defaultValue);
         }
         return extraDeep
       })
@@ -140,73 +154,82 @@ const api = {
     return getValue(whereChangeVal);
   },
   redirectUrl: dataUrl,
-  pureObject: (item) => {
-    // console.log(path)
-    // const getLayer = (value) => {
-    //   for (let i = 0; i < path.length; i++) {
-    //     if (value.data[path[i]].data.type !== 'hidden') {
-    //       value = value.data[path[i]];
-    //     }
-    //     value.data.value = '';
-    //   }
-    //   return value;
-    // }
-    // let copy = clone(item);
-    // copy.data.map((element) => {
-    //   element.data.value = '';
-    //   return element
-    // })
-    // console.log(item)
-    // return copy;
+  pureObject: (item, subGroup) => {
     let newObj = {};
-    let copy = { ...item };
+    let copy = cloneDeep(item);
     for (let key in item) {
       newObj[key] = copy[key];
       if (key === 'duplicate') {
         newObj[key] = true;
       }
     }
+    if (subGroup) {
+      newObj.data.map((item) => {
+        item.data.value = '';
+        console.log(item)
+        return newObj;
+      })
+    }
+    else {
+      newObj.data.map((item) => {
+        if (item.type !== 'group') {
+          item.data.value = ''
+          return newObj;
+        }
+      })
+    }
     return newObj
   },
-  setTotal: (whereChangeVal, path, type) => {
-    let currentCost = 0, whereTotal;
-    const getValue = (value) => {
-      for (let i = 0; i < path.length - 1; i++) {
-        value = value.data[path[i]];
-      }
-      value.data.map((extraDeep) => {
-        if (extraDeep.data.name === 'cost') {
-          currentCost = extraDeep.data.value;
-        }
-        return extraDeep
-      })
-    }
+  setTotal: (whereChangeVal, path, type, deleteItem) => {
+    let whereTotal, allCost = [], dicriment = 0;
     const getGlobalgroup = (value) => {
-      getValue(whereChangeVal);
-      for (let i = 0; i < path.length - 2; i++) {
-        value = value.data[path[i]];
-      }
-      value.data.map((extraDeep) => {
-        if (extraDeep.type === 'text') {
-        //  if (!remove) {
-        //   extraDeep.data.value = Number(extraDeep.data.value);
-        //   extraDeep.data.value += Number(currentCost);
-        //  }
-        //  else {
-        //   extraDeep.data.value = Number(extraDeep.data.value);
-        //   extraDeep.data.value -= Number(currentCost);
-        //  }
-          switch(type) {
-            case 'render': {
-              extraDeep.data.value = Number(extraDeep.data.value)
-              extraDeep.data.value += Number(currentCost);
-            }
-          }
+      if (type !== 'delete') {
+        for (let i = 0; i < path.length - 2; i++) {
+          value = value.data[path[i]];
         }
-        return extraDeep
-      })
+        value.data.map((extraDeep) => {
+          switch (extraDeep.type) {
+            case 'group':
+              extraDeep.data.map((item) => {
+                if (item.data.name === 'cost') {
+                  allCost.push(parseInt(item.data.value));
+                  return extraDeep;
+                }
+              })
+              break;
+            case 'text':
+                whereTotal = allCost.reduce((a, b) => a + b, 0);
+              break;
+            default:
+          }
+          return extraDeep
+        })
+        value.data.map((extraDeep) => {
+          if (extraDeep.type === 'text') {
+            console.log(extraDeep.data.value)
+            console.log(extraDeep)
+            extraDeep.data.value = whereTotal;
+          }
+          return extraDeep;
+        })
+      }
+      else {
+        for (let i = 0; i < path.length - 1; i++) {
+          value = value.data[path[i]];
+        }
+          deleteItem.data.map((item) => {
+            if (item.data.name === 'cost') {
+              allCost.push(item.data.value)
+            }
+          })
+        value.data.map((item) => {
+          if (item.type === 'text') {
+            item.data.value -= allCost[0];
+          }
+        })
+      }
     }
-    return getGlobalgroup(whereChangeVal);
+    return getGlobalgroup(whereChangeVal)
   }
 };
 

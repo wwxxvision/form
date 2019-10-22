@@ -14,7 +14,7 @@ export default (props) => (
       })
     }
     <Input onChange={props.changeValue}
-      readOnly={props.name === 'cost' || props.name === 'name' ? true : false}
+      readOnly={props.name === 'cost' || props.name === 'name' || props.name === 'total_cost' ? true : false}
       name={props.name} type={"text"}
       value={props.name !== 'cost' && props.name !== 'total_cost' && props.name !== 'name' && props.name !== 'model' ? props.valueInput : props.value}
       required={props.required ? true : false}

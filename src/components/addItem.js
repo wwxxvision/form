@@ -1,7 +1,6 @@
 import React from 'react';
 import api from '../api';
-import clone from 'clone';
-
+import {cloneDeep} from 'lodash';
 class AddItem extends React.Component {
   addingItem = () => {
     let addStateToRedux = {...this.props.dataApi};
@@ -24,7 +23,7 @@ class AddItem extends React.Component {
       }
       return value;
     }
-    let clonObj = clone(api.pureObject(getLayer(addStateToRedux)));
+    let clonObj = cloneDeep(api.pureObject(getLayer(addStateToRedux),this.props.subGroup));
     !this.props.subGroup ? addStateToRedux.data.splice(curInd + 1, 0, clonObj) : getLayersGroups(addStateToRedux).data.splice(curInd - 1, 0, clonObj);
     this.props.setRedux({
       addStateToRedux

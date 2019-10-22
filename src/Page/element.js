@@ -4,6 +4,7 @@ import Components from '../components';
 import Group from './group';
 import HelpList from '../Page/helpList';
 import Controllers from '../components/contollers';
+import { debounce } from 'lodash';
 class Element extends React.Component {
   constructor(props) {
     super(props);
@@ -16,6 +17,7 @@ class Element extends React.Component {
       complete: false,
       localCost: ''
     }
+    this.getTotal = debounce(this.getTotal, 500);
   }
   componentDidMount() {
     if (this.props.data.data.value) {
@@ -38,8 +40,9 @@ class Element extends React.Component {
   }
   addModel = (value) => {
     let toReduxValue = { ...this.props.toReduxValue }
-    let getModel = api.setBeforeResData(toReduxValue, this.props.path, value);
-    api.setTotal(toReduxValue, this.props.path);
+    api.setBeforeResData(toReduxValue, this.props.path, value);
+    api.getLocalCost(toReduxValue, this.props.path, value);
+    this.getTotal('counter');
     this.props.setRedux({
       toReduxValue
     })
@@ -96,76 +99,86 @@ class Element extends React.Component {
       setDependeces();
     }
     else if (dataApi.name === 'model') {
-      formData.append('model', e.target.value)
-      fetch(`${api.url}`, {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(res => {
-          !res.error ? this.setState({
-            helpList: res.products
-          }) : this.setState({
-            helpList: false
-          })
-          if (res.products) {
-            Object.entries(res.products).map((result) => {
-              if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
-                this.setState({
-                  current: result[1],
-                  complete: true,
-                  helpList: false
-                })
-              }
-              return this.state;
-            })
-          }
-        }).then(() => {
-          if (this.state.current && this.state.complete) {
-            api.setBeforeResData(toReduxValue, this.props.path, this.state.current);
-            api.getLocalCost(toReduxValue, this.props.path, this.state.current);
-            console.log('1')
-            this.props.setRedux({
-              toReduxValue
-            })
-          }
-        })
-      if ((e.target.value !== this.state.current.name && this.state.complete) || (!e.target.value && this.props.toReduxValue)) {
-        api.setTotal(toReduxValue, this.props.path, true);
-        let getModel = api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true);
-        this.props.setRedux({
-          toReduxValue
-        })
-        this.setState({
-          complete: false,
-          current: ''
-        })
-        return this.props.toReduxValue;
-      }
+      this.goingToGetModels(toReduxValue, e.target.value, formData);
+      this.getTotal('render');
     }
     else if (dataApi.name === 'count') {
-      const callBackCost = (def) => {
+      const callBackCounter = () => {
         api.factorSum(toReduxValue, this.props.path, this.state.valueInput);
-        api.setTotal(toReduxValue, this.props.path);
+        this.getTotal('counter', dataApi.value);
         this.props.setRedux({
           toReduxValue
         })
       }
-      if (e.target.value > 0) {
-        this.setState({
-          valueInput: e.target.value.replace(/\D/, '')
-        }, (() => {
-          callBackCost();
-        }));
-      }
-      else {
+      if (e.target.value === 0 || e.target.value < 0 || !e.target.value) {
         this.setState({
           valueInput: 1
         }, (() => {
-          callBackCost(true);
-        }));
+          callBackCounter();
+        }))
         e.target.value = 1;
       }
+      else {
+        this.setState({
+          valueInput: e.target.value.replace(/\D/, '')
+        }, (() => {
+          callBackCounter();
+        }))
+      }
+    }
+  }
+  getTotal = (type, counter) => {
+    let toReduxValue = { ...this.props.toReduxValue }
+    api.setTotal(toReduxValue, this.props.path, type, counter);
+    this.props.setRedux({
+      toReduxValue
+    });
+  }
+  goingToGetModels = (toReduxValue, value, formData) => {
+    formData.append('model', value)
+    fetch(`${api.url}`, {
+      method: 'POST',
+      body: formData
+    })
+      .then(res => res.json())
+      .then(res => {
+        !res.error ? this.setState({
+          helpList: res.products
+        }) : this.setState({
+          helpList: false
+        })
+        if (res.products) {
+          Object.entries(res.products).map((result) => {
+            if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
+              this.setState({
+                current: result[1],
+                complete: true,
+                helpList: false
+              })
+            }
+            return this.state;
+          })
+        }
+      }).then(() => {
+        if (this.state.current && this.state.complete) {
+          api.setBeforeResData(toReduxValue, this.props.path, this.state.current);
+          api.getLocalCost(toReduxValue, this.props.path, this.state.current);
+          this.props.setRedux({
+            toReduxValue
+          });
+        }
+      })
+    if ((value !== this.state.current.name && this.state.complete) || (!value && this.props.toReduxValue)) {
+      api.setTotal(toReduxValue, this.props.path, true);
+      api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true);
+      this.props.setRedux({
+        toReduxValue
+      })
+      this.setState({
+        complete: false,
+        current: ''
+      })
+      return this.props.toReduxValue;
     }
   }
   render() {
