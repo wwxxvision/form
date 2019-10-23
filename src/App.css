@@ -263,6 +263,9 @@ span.error_message + div {
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
+.MuiInputBase-input {
+  border: 0!important;
+}
 @media (max-width: 1025px) {
   .full_screen {
     overflow-x: hidden;

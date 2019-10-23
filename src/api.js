@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import * as actions from './redux/actions';
 import clone from 'clone';
 import { cloneDeep } from 'lodash';
+import { bigIntLiteral } from '@babel/types';
 const whithoutType = (state) => {
   let newState = {};
   Object.keys(state).forEach((key) => {
@@ -36,8 +37,7 @@ const api = {
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
-    `${dataUrl + step}`
-    return fetch(paramsUrl && dataProjectId ? `${APIURL + step}&method=get&project_id=${dataProjectId}` :   `${APIURL + step}`, {
+    return fetch(!paramsUrl ? `${APIURL + step}` : `${APIURL + step}&method=get&project_id=${dataProjectId}`, {
       method: 'GET'
     })
       .then(res => res.json())
@@ -106,6 +106,17 @@ const api = {
       value.data.map((extraDeep) => {
         if (current) {
           !isClean ? extraDeep.data.value = current[extraDeep.data.name] : extraDeep.data.value = '';
+          if (extraDeep.data.name === 'count') {
+            extraDeep.data.value = 1;
+          }
+          switch (extraDeep.data.name) {
+            case 'count':
+              extraDeep.data.value = 1;
+            case  'product_id':
+              extraDeep.data.value = current['id'];
+              break;
+            default:
+          }
         }
         else {
           extraDeep.data.value = '';
@@ -174,7 +185,7 @@ const api = {
     return getValue(whereChangeVal);
   },
   redirectUrl: dataUrl,
-  pureObject: (item, subGroup) => {
+  pureObject: (item, subGroup, path) => {
     let newObj = {};
     let copy = cloneDeep(item);
     for (let key in item) {
@@ -183,38 +194,54 @@ const api = {
         newObj[key] = true;
       }
     }
-    if (subGroup) {
-      if (newObj.data) {
-        newObj.data.map((item) => {
-          if (!Array.isArray(item) && item) {
-            item.data.value = '';
-          }
-          else {
-            return newObj;
-          }
-          return newObj;
-        })
+    let sysPath = newObj.data.length;
+    const getValue = (value) => {
+      for (let i = 0; i < sysPath; i++) {
+        if (value[i].type !== 'group' && value[i].type !== 'hidden') {
+          value[i].data.value = '';
+          value[i].data.uid = `${value[i].data.uid + i}`;
+        }
       }
+      return value
     }
-    else {
-      if (newObj.data) {
-        newObj.data.map((item) => {
-          if (item) {
-            if (item.type !== 'group') {
-              item.data.value = ''
-              return newObj;
-            }
-            else {
-              return newObj;
-            }
-          }
-          else {
-            return newObj;
-          }
-        })
-      }
-    }
-    return newObj
+    getValue(newObj.data);
+    return newObj;
+    // if (subGroup) {
+    //   if (newObj.data) {
+    //     newObj.data.map((item) => {
+    //       if (!Array.isArray(item) && item) {
+    //         item.data.value = '';
+    //         count++;
+    //         item.data.uid = `${item.data.uid + count}`;
+    //         console.log(item)
+    //       }
+    //       else {
+    //         return newObj;
+    //       }
+    //       return newObj;
+    //     })
+    //   }
+    // }
+    // else {
+    //   if (newObj.data) {
+    //     newObj.data.map((item) => {
+    //       if (item) {
+    //         if (item.type !== 'group') {
+    //           item.data.value = '';
+    //           count++;
+    //           item.data.uid = `${item.data.uid + count}`;
+    //           return newObj;
+    //         }
+    //         else {
+    //           return newObj;
+    //         }
+    //       }
+    //       else {
+    //         return newObj;
+    //       }
+    //     })
+    //   }
+    // }
   },
   setTotal: (whereChangeVal, path, type, deleteItem) => {
     let whereTotal, allCost = [], dicriment = 0;
@@ -261,19 +288,21 @@ const api = {
         })
       }
       else {
-        for (let i = 0; i < path.length - 1; i++) {
-          value = value.data[path[i]];
+        if (deleteItem) {
+          for (let i = 0; i < path.length - 1; i++) {
+            value = value.data[path[i]];
+          }
+          deleteItem.data.map((item) => {
+            if (item.data.name === 'cost') {
+              allCost.push(item.data.value)
+            }
+          })
+          value.data.map((item) => {
+            if (item.type === 'text') {
+              item.data.value -= allCost[0];
+            }
+          })
         }
-        deleteItem.data.map((item) => {
-          if (item.data.name === 'cost') {
-            allCost.push(item.data.value)
-          }
-        })
-        value.data.map((item) => {
-          if (item.type === 'text') {
-            item.data.value -= allCost[0];
-          }
-        })
       }
     }
     return getGlobalgroup(whereChangeVal)

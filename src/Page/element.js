@@ -35,13 +35,6 @@ class Element extends React.Component {
      }
     }
   }
-  focusCount = (e) => {
-    if (this.props.data.data.name === 'count' && !this.state.valueInput) {
-      this.setState({
-        valueInput: ''
-      })
-    }
-  }
   addModel = (value) => {
     let toReduxValue = { ...this.props.toReduxValue }
     api.setBeforeResData(toReduxValue, this.props.path, value);
@@ -240,6 +233,7 @@ class Element extends React.Component {
           isError={this.props.isError}
           value={this.props.data.data.value}
           uid={this.props.data.data.uid}
+          label={this.props.data.data.label}
           typeError={this.props.typeError}
           required={this.props.data.data.required} />
       case 'date_list':
