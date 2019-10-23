@@ -36,7 +36,6 @@ class RenderPages extends React.Component {
         this.setState({
           isSaveProgress: false
         })
-        console.log(res)
       })
       .then(() => {
         if (!this.props.isError) {

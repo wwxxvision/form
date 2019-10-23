@@ -24,11 +24,13 @@ class Element extends React.Component {
       this.setState({
         valueInput: this.props.data.data.value
       })
-      if (this.props.data.data.name === 'cost') {
-        this.setState({
-          localCost: this.props.data.data.value
-        })
-      }
+    }
+  }
+  componentWillReceiveProps(prevProps) {
+    if (prevProps.addStateToRedux !== this.props.addStateToRedux) {
+      this.setState({
+        valueInput: 1
+      })
     }
   }
   focusCount = (e) => {
@@ -99,10 +101,13 @@ class Element extends React.Component {
       setDependeces();
     }
     else if (dataApi.name === 'model') {
-      this.goingToGetModels(toReduxValue, e.target.value, formData);
-      this.getTotal('render');
+      this.goingToGetModels(toReduxValue, e.target.value, formData).then(() => {
+        if (this.state.complete) {
+          this.getTotal('render');
+        }
+      });
     }
-    else if (dataApi.name === 'count') {
+    else if (dataApi.name === 'count' && api.getCostForDelete(toReduxValue, this.props.path)) {
       const callBackCounter = () => {
         api.factorSum(toReduxValue, this.props.path, this.state.valueInput);
         this.getTotal('counter', dataApi.value);
@@ -127,59 +132,67 @@ class Element extends React.Component {
       }
     }
   }
-  getTotal = (type, counter) => {
+  getTotal = (type, deleteItem) => {
+   return new Promise((resolve) => {
     let toReduxValue = { ...this.props.toReduxValue }
-    api.setTotal(toReduxValue, this.props.path, type, counter);
-    this.props.setRedux({
+    api.setTotal(toReduxValue, this.props.path, type, deleteItem);
+    resolve(this.props.setRedux({
       toReduxValue
-    });
+    }));
+   })
   }
   goingToGetModels = (toReduxValue, value, formData) => {
-    formData.append('model', value)
-    fetch(`${api.url}`, {
-      method: 'POST',
-      body: formData
-    })
-      .then(res => res.json())
-      .then(res => {
-        !res.error ? this.setState({
-          helpList: res.products
-        }) : this.setState({
-          helpList: false
+    return new Promise((resolve) => {
+      let type = '', deleteItem = false;
+      formData.append('model', value)
+      fetch(`${api.url}`, {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(res => {
+          !res.error ? this.setState({
+            helpList: res.products
+          }) : this.setState({
+            helpList: false
+          })
+          if (res.products) {
+            Object.entries(res.products).map((result) => {
+              if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
+                this.setState({
+                  current: result[1],
+                  complete: true,
+                  helpList: false
+                })
+              }
+              return this.state;
+            })
+          }
+        }).then(() => {
+          if (this.state.current && this.state.complete) {
+            resolve(api.setBeforeResData(toReduxValue, this.props.path, this.state.current));
+            api.getLocalCost(toReduxValue, this.props.path, this.state.current);
+            this.props.setRedux({
+              toReduxValue
+            });
+          }
         })
-        if (res.products) {
-          Object.entries(res.products).map((result) => {
-            if (result[1].model.toUpperCase() === this.state.valueInput.toUpperCase()) {
-              this.setState({
-                current: result[1],
-                complete: true,
-                helpList: false
-              })
-            }
-            return this.state;
+      if ((value !== this.state.current.name && this.state.complete) || (!value && this.props.toReduxValue)) {
+        if (api.getCostForDelete(toReduxValue, this.props.path)) {
+          this.getTotal('clear', api.getCostForDelete(toReduxValue, this.props.path)).then(() => {
+            resolve(api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true));
           })
         }
-      }).then(() => {
-        if (this.state.current && this.state.complete) {
-          api.setBeforeResData(toReduxValue, this.props.path, this.state.current);
-          api.getLocalCost(toReduxValue, this.props.path, this.state.current);
-          this.props.setRedux({
-            toReduxValue
-          });
-        }
-      })
-    if ((value !== this.state.current.name && this.state.complete) || (!value && this.props.toReduxValue)) {
-      api.setTotal(toReduxValue, this.props.path, true);
-      api.setBeforeResData(toReduxValue, this.props.path, this.state.current, true);
-      this.props.setRedux({
-        toReduxValue
-      })
-      this.setState({
-        complete: false,
-        current: ''
-      })
-      return this.props.toReduxValue;
-    }
+        this.props.setRedux({
+          toReduxValue
+        })
+        this.setState({
+          complete: false,
+          current: ''
+        })
+        return this.getTotal('clear', api.getCostForDelete(toReduxValue, this.props.path));
+      }
+    })
   }
   render() {
     switch (this.props.data.type) {

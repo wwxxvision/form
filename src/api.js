@@ -115,7 +115,7 @@ const api = {
     }
     return getValue(whereChangeVal);
   },
-  getLocalCost: (whereChangeVal, path, current) => {
+  getLocalCost: (whereChangeVal, path, current, totalSum) => {
     let cost = 0;
     const getValue = (value) => {
       for (let i = 0; i < path.length - 1; i++) {
@@ -153,6 +153,23 @@ const api = {
     }
     return getValue(whereChangeVal);
   },
+  getCostForDelete: (whereChangeVal, path) => {
+    let cost = 0;
+    const getValue = (value) => {
+      for (let i = 0; i < path.length - 1; i++) {
+        value = value.data[path[i]];
+      }
+      value.data.map((extraDeep) => {
+        if (extraDeep.data.name === 'cost') {
+          cost =  extraDeep.data.value ;
+          console.log(cost)
+        }
+        return extraDeep
+      })
+      return cost;
+    }
+    return getValue(whereChangeVal);
+  },
   redirectUrl: dataUrl,
   pureObject: (item, subGroup) => {
     let newObj = {};
@@ -166,7 +183,6 @@ const api = {
     if (subGroup) {
       newObj.data.map((item) => {
         item.data.value = '';
-        console.log(item)
         return newObj;
       })
     }
@@ -183,7 +199,11 @@ const api = {
   setTotal: (whereChangeVal, path, type, deleteItem) => {
     let whereTotal, allCost = [], dicriment = 0;
     const getGlobalgroup = (value) => {
-      if (type !== 'delete') {
+      if (type !== 'delete' && type !== 'clear') {
+        switch (type) {
+          case 'delete':
+            break;
+        }
         for (let i = 0; i < path.length - 2; i++) {
           value = value.data[path[i]];
         }
@@ -198,18 +218,25 @@ const api = {
               })
               break;
             case 'text':
-                whereTotal = allCost.reduce((a, b) => a + b, 0);
+              whereTotal = allCost.reduce((a, b) => a + b, 0);
               break;
             default:
           }
           return extraDeep
         })
         value.data.map((extraDeep) => {
-          if (extraDeep.type === 'text') {
-            console.log(extraDeep.data.value)
-            console.log(extraDeep)
-            extraDeep.data.value = whereTotal;
-          }
+          extraDeep.data.value = whereTotal;
+          return extraDeep;
+        })
+      }
+      else if (type === 'clear') {
+        for (let i = 0; i < path.length - 2; i++) {
+          value = value.data[path[i]];
+        }
+        whereTotal = parseInt(deleteItem);
+        console.log(whereTotal)
+        value.data.map((extraDeep) => {
+          extraDeep.data.value -= whereTotal;
           return extraDeep;
         })
       }
@@ -217,11 +244,11 @@ const api = {
         for (let i = 0; i < path.length - 1; i++) {
           value = value.data[path[i]];
         }
-          deleteItem.data.map((item) => {
-            if (item.data.name === 'cost') {
-              allCost.push(item.data.value)
-            }
-          })
+        deleteItem.data.map((item) => {
+          if (item.data.name === 'cost') {
+            allCost.push(item.data.value)
+          }
+        })
         value.data.map((item) => {
           if (item.type === 'text') {
             item.data.value -= allCost[0];

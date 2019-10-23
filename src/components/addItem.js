@@ -24,7 +24,7 @@ class AddItem extends React.Component {
       return value;
     }
     let clonObj = cloneDeep(api.pureObject(getLayer(addStateToRedux),this.props.subGroup));
-    !this.props.subGroup ? addStateToRedux.data.splice(curInd + 1, 0, clonObj) : getLayersGroups(addStateToRedux).data.splice(curInd - 1, 0, clonObj);
+    !this.props.subGroup ? addStateToRedux.data.splice(curInd - 1, 0, clonObj) : getLayersGroups(addStateToRedux).data.splice(curInd - 1, 0, clonObj);
     this.props.setRedux({
       addStateToRedux
     });

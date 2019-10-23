@@ -9,7 +9,7 @@ export default (props) => (
     <p className="form_label"></p>
     {props.isError && props.typeError &&
       props.typeError.map((type, index) => {
-        if (type.uid === `distributor_info_distributors_${props.indxGroup}`) {
+        if (type.uid === `distributor_info_distributors_${props.indxGroup}` || !props.value) {
           return (
               <span key={index} className="error_message">{type.error}</span>         
           )
