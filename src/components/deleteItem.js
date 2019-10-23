@@ -21,8 +21,10 @@ class DeleteItem extends React.Component {
       }
       return value;
     }
+    if (this.props.subGroup) {
+      api.setTotal(deleteStateToRedux, this.props.path,'delete', getLayersGroups(deleteStateToRedux).data[willRemoveInd]);
+    }
     getLayer(deleteStateToRedux);
-    api.setTotal(deleteStateToRedux, this.props.path,'delete', getLayersGroups(deleteStateToRedux).data[willRemoveInd]);
     delete getLayersGroups(deleteStateToRedux).data[willRemoveInd];
     this.props.setRedux({
       deleteStateToRedux

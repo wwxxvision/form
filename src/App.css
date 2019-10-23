@@ -278,4 +278,7 @@ span.error_message + div {
   .form_block {
     width: 300px;
   }
+  .form__title {
+    font-size: 24px;
+  }
 }

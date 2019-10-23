@@ -17,7 +17,7 @@ export default (props) => (
     <Input
       onChange={props.changeValue}
       name={props.name} type="date"
-      value={props.valueInput}
+      value={props.value}
       required={props.required ? true : false}
       className="full_width input_margin"
     />

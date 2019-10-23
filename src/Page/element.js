@@ -28,15 +28,17 @@ class Element extends React.Component {
   }
   componentWillReceiveProps(prevProps) {
     if (prevProps.addStateToRedux !== this.props.addStateToRedux) {
+     if (this.props.data.data.name === 'count') {
       this.setState({
         valueInput: 1
-      })
+      });
+     }
     }
   }
   focusCount = (e) => {
     if (this.props.data.data.name === 'count' && !this.state.valueInput) {
       this.setState({
-        valueInput: 1
+        valueInput: ''
       })
     }
   }
@@ -143,7 +145,6 @@ class Element extends React.Component {
   }
   goingToGetModels = (toReduxValue, value, formData) => {
     return new Promise((resolve) => {
-      let type = '', deleteItem = false;
       formData.append('model', value)
       fetch(`${api.url}`, {
         method: 'POST',

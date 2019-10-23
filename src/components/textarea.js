@@ -16,7 +16,7 @@ export default (props) => (
     <TextField
       onChange={props.changeValue}
       required={props.required ? true : false}
-      value={props.valueInput}
+      value={props.value}
       rows={5}
       variant="filled"
       className="full_width input_margin"

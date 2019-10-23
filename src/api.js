@@ -16,7 +16,7 @@ const APIURL_EMPTY = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?
 const paramsUrl = document.querySelector('.local_form_properties') ? document.querySelector('.local_form_properties') : undefined;
 let dataUrl = paramsUrl ? paramsUrl.getAttribute('data-url') : undefined;
 let dataProjectId = paramsUrl ? paramsUrl.getAttribute('data-project_id') : undefined;
-const allCosts = [];
+console.log(dataUrl, dataProjectId, paramsUrl);
 const api = {
   url: APIURL,
   connect: (component_) => {
@@ -145,7 +145,9 @@ const api = {
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
-          extraDeep.data.value = Number(staticValue) * Number(extraDeep.data.defaultValue);
+          if (extraDeep.data.value) {
+            extraDeep.data.value = Number(staticValue) * Number(extraDeep.data.defaultValue);
+          }
         }
         return extraDeep
       })
@@ -161,7 +163,7 @@ const api = {
       }
       value.data.map((extraDeep) => {
         if (extraDeep.data.name === 'cost') {
-          cost =  extraDeep.data.value ;
+          cost = extraDeep.data.value;
           console.log(cost)
         }
         return extraDeep
@@ -181,18 +183,35 @@ const api = {
       }
     }
     if (subGroup) {
-      newObj.data.map((item) => {
-        item.data.value = '';
-        return newObj;
-      })
+      if (newObj.data) {
+        newObj.data.map((item) => {
+          if (!Array.isArray(item) && item) {
+            item.data.value = '';
+          }
+          else {
+            return newObj;
+          }
+          return newObj;
+        })
+      }
     }
     else {
-      newObj.data.map((item) => {
-        if (item.type !== 'group') {
-          item.data.value = ''
-          return newObj;
-        }
-      })
+      if (newObj.data) {
+        newObj.data.map((item) => {
+          if (item) {
+            if (item.type !== 'group') {
+              item.data.value = ''
+              return newObj;
+            }
+            else {
+              return newObj;
+            }
+          }
+          else {
+            return newObj;
+          }
+        })
+      }
     }
     return newObj
   },
@@ -200,10 +219,6 @@ const api = {
     let whereTotal, allCost = [], dicriment = 0;
     const getGlobalgroup = (value) => {
       if (type !== 'delete' && type !== 'clear') {
-        switch (type) {
-          case 'delete':
-            break;
-        }
         for (let i = 0; i < path.length - 2; i++) {
           value = value.data[path[i]];
         }
@@ -211,21 +226,25 @@ const api = {
           switch (extraDeep.type) {
             case 'group':
               extraDeep.data.map((item) => {
-                if (item.data.name === 'cost') {
+                if (item.data.name === 'cost' && item.data.value) {
                   allCost.push(parseInt(item.data.value));
                   return extraDeep;
                 }
               })
               break;
             case 'text':
-              whereTotal = allCost.reduce((a, b) => a + b, 0);
+              if (allCost.length > 0) {
+                whereTotal = allCost.reduce((a, b) => a + b, 0);
+              }
               break;
             default:
           }
           return extraDeep
         })
         value.data.map((extraDeep) => {
-          extraDeep.data.value = whereTotal;
+          if (whereTotal) {
+            extraDeep.data.value = whereTotal;
+          }
           return extraDeep;
         })
       }
