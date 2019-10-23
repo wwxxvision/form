@@ -36,7 +36,8 @@ const api = {
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
-    return fetch(!paramsUrl ? `${APIURL + step}` : `${APIURL + step}&method=get&project_id=${dataProjectId}`, {
+    `${dataUrl + step}`
+    return fetch(paramsUrl && dataProjectId ? `${APIURL + step}&method=get&project_id=${dataProjectId}` :   `${APIURL + step}`, {
       method: 'GET'
     })
       .then(res => res.json())
