@@ -1,5 +1,5 @@
 const initialState = {
-  page: 2,
+  page: 0,
   apiPage: {
     data: [],
     resposneServer: false
