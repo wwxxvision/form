@@ -15,18 +15,22 @@ class DeleteItem extends React.Component {
     }
     const getLayersGroups = (value) => {
       for (let i = 0; i < this.props.path.length - 1; i++) {
-        console.log(value)
         if (value.data[this.props.path[i]].data.type !== 'hidden') {
           value = value.data[this.props.path[i]];
         }
       }
       return value;
     }
-    if (this.props.subGroup) {
-      api.setTotal(deleteStateToRedux, this.props.path,'delete', getLayersGroups(deleteStateToRedux).data[willRemoveInd]);
-    }
     getLayer(deleteStateToRedux);
-    getLayersGroups(deleteStateToRedux).data.splice(willRemoveInd, 1);
+    if (this.props.subGroup && getLayersGroups(deleteStateToRedux).data[willRemoveInd].name === 'delivery_list') {
+      api.setTotal(deleteStateToRedux, this.props.path,'delete', getLayersGroups(deleteStateToRedux).data.splice(willRemoveInd, 1));
+    }
+    if (getLayersGroups(deleteStateToRedux).data[willRemoveInd].name === 'delivery_list') {
+      getLayersGroups(deleteStateToRedux).data.splice(willRemoveInd, -1);
+    }
+    else {
+      getLayersGroups(deleteStateToRedux).data.splice(willRemoveInd, 1);
+    }
     this.props.setRedux({
       deleteStateToRedux
     });

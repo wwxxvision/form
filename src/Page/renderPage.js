@@ -96,7 +96,7 @@ class RenderPages extends React.Component {
               </div>
             }
             {this.props.page === 0 && this.state.isSaveProgress &&
-              <img src={preloaders} alt="btn_loader" className="loader_button" />
+              <img src={!api.preloaderUrl ? preloaders : api.preloaderUrl} alt="btn_loader" className="loader_button" />
             }
             {this.props.page === 1 && !this.state.isSaveProgress &&
               <div className="flex mg_top_btns">
@@ -109,7 +109,7 @@ class RenderPages extends React.Component {
               </div>
             }
             {this.props.page === 1 && this.state.isSaveProgress &&
-              <img src={preloaders} alt="btn_loader" className="loader_button" />
+              <img src={!api.preloaderUrl ? preloaders : api.preloaderUrl} alt="btn_loader" className="loader_button" />
             }
             {this.props.page === 2 && !this.state.isSaveProgress &&
               <div className="pure_flex mg_top_btns">
@@ -120,13 +120,13 @@ class RenderPages extends React.Component {
               </div>
             }
             {this.props.page === 2 && this.state.isSaveProgress &&
-              <img src={preloaders} alt="btn_loader" className="loader_button" />
+              <img src={!api.preloaderUrl ? preloaders : api.preloaderUrl} alt="btn_loader" className="loader_button" />
             }
           </div>
         }
         {this.state.isLoad &&
           <div className="flex wrapper_loader">
-            <img src={preloaders} alt="preloader" className="preloader" />
+            <img src={!api.preloaderUrl ? preloaders : api.preloaderUrl} alt="preloader" className="preloader" />
             {this.props.apiPage.error &&
               <>
                 <p className="preloader_text">Ошибка на сервере</p>

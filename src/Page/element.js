@@ -25,6 +25,12 @@ class Element extends React.Component {
         valueInput: this.props.data.data.value
       })
     }
+    if (this.props.data.data.name === 'cost') {
+      if (this.props.data.data.value) {
+        let toReduxValue = {...this.props.apiPage}
+        api.getLocalCost(toReduxValue, this.props.path, false, this.props.data.data.value);
+      }
+    }
   }
   componentWillReceiveProps(prevProps) {
     if (prevProps.addStateToRedux !== this.props.addStateToRedux) {
@@ -130,10 +136,10 @@ class Element extends React.Component {
   getTotal = (type, deleteItem) => {
    return new Promise((resolve) => {
     let toReduxValue = { ...this.props.toReduxValue }
-    api.setTotal(toReduxValue, this.props.path, type, deleteItem);
-    resolve(this.props.setRedux({
-      toReduxValue
-    }));
+    resolve(api.setTotal(toReduxValue, this.props.path, type, deleteItem));
+    this.props.setRedux({
+        toReduxValue
+      });
    })
   }
   goingToGetModels = (toReduxValue, value, formData) => {
