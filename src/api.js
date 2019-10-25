@@ -116,6 +116,9 @@ const api = {
             case 'product_id':
               extraDeep.data.value = current['id'];
               break;
+            case 'id':
+                extraDeep.data.value = '';
+              break;
             default:
           }
         }
