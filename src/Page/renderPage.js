@@ -39,6 +39,9 @@ class RenderPages extends React.Component {
       })
       .then(() => {
         if (!this.props.isError) {
+          if (this.props.page === 2) {
+            window.location.href = api.redirectUrl;
+          }
           classItem.classList.contains('back_button') ? (page -= 1) : (page < 2 ? page += 1 : page = 0);
           api.fetchData(page, () => { this.setState({ isLoad: true }) }).then((res) => {
             this.props.setRedux({ apiPage: res });
@@ -61,9 +64,6 @@ class RenderPages extends React.Component {
         this.setState({
           isSaveProgress: false
         })
-        if (this.props.page === 2 && api.redirectUrl) {
-          window.location.href = api.redirectUrl;
-        }
       })
       api.getClearObject(page);
     }
