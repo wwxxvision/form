@@ -4,8 +4,15 @@ import { Input } from '@material-ui/core';
 export default (props) => (
   <React.Fragment>
     <p className="form_label">{props.label}</p>
-    {props.isError && props.typeError && !props.value &&
-      <span  className="error_message">Заполните поле Правильно</span>      
+    {props.isError && props.typeError  && 
+      props.typeError.map((type, index) => {
+        if (type.uid === props.uid) {
+          return (
+            <span key={index} className="error_message">{type.error}</span>
+          )
+        }
+        return false;
+      })
     }
     <Input
       onChange={props.changeValue}
