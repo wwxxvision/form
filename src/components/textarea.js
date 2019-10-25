@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 export default (props) => (
   <React.Fragment>
-    <p className="form_label"></p>
+    <p className="form_label">{props.label}</p>
     {props.isError && props.typeError  && 
       props.typeError.map((type, index) => {
         if (type.uid === props.uid) {
