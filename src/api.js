@@ -196,6 +196,9 @@ const api = {
     let copy = cloneDeep(item);
     for (let key in item) {
       newObj[key] = copy[key];
+      if (key === 'value') {
+        newObj[key] = '';
+      }
       if (key === 'duplicate') {
         newObj[key] = true;
       }
@@ -204,6 +207,7 @@ const api = {
     const getValue = (value) => {
       for (let i = 0; i < sysPath; i++) {
         if (value[i].type !== 'group' && value[i].type !== 'hidden') {
+          value[i].data.value = '';
           if (value[i].data.name !== 'total_cost') {
             value[i].data.value = '';
             value[i].data.uid = `${value[i].data.uid + i}`;

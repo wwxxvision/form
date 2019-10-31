@@ -13,7 +13,7 @@ export default (props) => (
     <Select
       onChange={props.changeValue}
       className="full_width"
-      value={!props.valueInput ? props.value : props.valueInput}
+      value={props.value}
       required={props.required ? true : false}
     >
       {Object.entries(props.options).map((item, index) => {
