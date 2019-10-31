@@ -16,7 +16,7 @@ export default (props) => (
     <Input onChange={props.changeValue}
       readOnly={props.name === 'cost' || props.name === 'name' || props.name === 'total_cost' ? true : false}
       name={props.name} type={"text"}
-      value={props.value}
+      value={props.name !== 'count' ? props.value : props.valueInput}
       required={props.required ? true : false}
       onFocus={props.focusCount}
       className="full_width input_margin"

@@ -18,6 +18,7 @@ const paramsUrl = document.querySelector('.local_form_properties') ? document.qu
 let dataUrl = paramsUrl ? paramsUrl.getAttribute('data-url') : undefined;
 let preloaderUrl = paramsUrl ? paramsUrl.getAttribute('data-preload') : undefined
 let dataProjectId = paramsUrl ? paramsUrl.getAttribute('data-project_id') : undefined;
+let counter = 0;
 const api = {
   url: APIURL,
   connect: (component_) => {
@@ -117,7 +118,7 @@ const api = {
               extraDeep.data.value = current['id'];
               break;
             case 'id':
-                extraDeep.data.value = '';
+              extraDeep.data.value = '';
               break;
             default:
           }
@@ -196,11 +197,24 @@ const api = {
     let copy = cloneDeep(item);
     for (let key in item) {
       newObj[key] = copy[key];
-      if (key === 'value') {
-        newObj[key] = '';
-      }
-      if (key === 'duplicate') {
-        newObj[key] = true;
+      switch (key) {
+        case 'value':
+          newObj[key] = '';
+          break;
+        case 'duplicate':
+          newObj[key] = true;
+          break;
+        case 'data':
+          if (Array.isArray(newObj[key])) {
+            newObj[key].map((finderId) => {
+              if (finderId.type === 'hidden' && finderId.data.name === 'id') {
+                finderId.data.value = parseInt(finderId.data.value) + 1;
+              }
+            })
+          }
+            break;
+        default:
+          break;
       }
     }
     let sysPath = newObj.data.length;
