@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 export default (props) => (
   // className={api.setClasses(['full_width', 'select'], { hidden: props.options })}
   <div className={api.setClasses(['full_width', 'select'], { hidden: props.options == false })}>
-    <p className="form_label"></p>
+    <p className="form_label">{props.label}</p>
     {props.isError && props.typeError && !props.value &&
      <span  className="error_message">Заполните поле Правильно</span>      
     }
