@@ -27,18 +27,18 @@ class Element extends React.Component {
     }
     if (this.props.data.data.name === 'cost') {
       if (this.props.data.data.value) {
-        let toReduxValue = {...this.props.apiPage}
+        let toReduxValue = { ...this.props.apiPage }
         api.getLocalCost(toReduxValue, this.props.path, false, this.props.data.data.value);
       }
     }
   }
   componentWillReceiveProps(prevProps) {
     if (prevProps.addStateToRedux !== this.props.addStateToRedux) {
-     if (this.props.data.data.name === 'count') {
-      this.setState({
-        valueInput: 1
-      });
-     }
+      if (this.props.data.data.name === 'count') {
+        this.setState({
+          valueInput: 1
+        });
+      }
     }
   }
   addModel = (value) => {
@@ -134,13 +134,13 @@ class Element extends React.Component {
     }
   }
   getTotal = (type, deleteItem) => {
-   return new Promise((resolve) => {
-    let toReduxValue = { ...this.props.toReduxValue }
-    resolve(api.setTotal(toReduxValue, this.props.path, type, deleteItem));
-    this.props.setRedux({
+    return new Promise((resolve) => {
+      let toReduxValue = { ...this.props.toReduxValue }
+      resolve(api.setTotal(toReduxValue, this.props.path, type, deleteItem));
+      this.props.setRedux({
         toReduxValue
       });
-   })
+    })
   }
   goingToGetModels = (toReduxValue, value, formData) => {
     return new Promise((resolve) => {
@@ -266,7 +266,9 @@ class Element extends React.Component {
         return (
           <React.Fragment>
             <Group keyGroup={this.props.indexEl} path={[...this.props.path]} data={this.props.data} />
-            <Controllers subGroup={true} path={[...this.props.path]} dataApi={this.props.apiPage} index={this.props.path[0]} />
+            {this.props.data.canDuplicate &&
+              <Controllers subGroup={true} path={[...this.props.path]} dataApi={this.props.apiPage} index={this.props.path[0]} />
+            }
           </React.Fragment>
         )
       default:

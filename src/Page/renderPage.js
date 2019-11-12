@@ -80,7 +80,9 @@ class RenderPages extends React.Component {
                   return (
                     <React.Fragment key={index + 'fragment'} >
                       <Group path={[index]} key={index} indexGroup={index} data={item} />
-                      <Controllers path={[index]} duplicate={item.duplicate} fields={item.data} type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
+                      {item.canDuplicate &&
+                        <Controllers path={[index]} duplicate={item.duplicate} fields={item.data} type={item.type} key={item} dataApi={this.props.apiPage} index={index} />
+                      }
                     </React.Fragment>
                   )
                 }

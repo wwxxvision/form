@@ -266,6 +266,12 @@ span.error_message + div {
 .MuiInputBase-input {
   border: 0!important;
 }
+.MuiFilledInput-root {
+  background-color: #fff!important;
+}
+.MuiTextField-root {
+  border: 1px solid rgba(0, 0, 0, 0.42)!important;
+}
 @media (max-width: 1025px) {
   .full_screen {
     overflow-x: hidden;
