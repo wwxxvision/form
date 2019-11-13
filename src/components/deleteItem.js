@@ -2,7 +2,7 @@ import React from 'react';
 import api from '../api';
 class DeleteItem extends React.Component {
   removeElementAds = () => {
-    let deleteStateToRedux = { ...this.props.addStateToRedux };
+    let deleteStateToRedux = this.props.addStateToRedux ? { ...this.props.addStateToRedux } : {...this.props.dataApi};
     let willRemoveInd;
     const getLayer = (value) => {
       for (let i = 0; i < this.props.path.length; i++) {

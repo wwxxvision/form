@@ -12,8 +12,8 @@ const whithoutType = (state) => {
   })
   return newState;
 }
-const APIURL = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?page=';
-const APIURL_EMPTY = 'http://192.168.0.251:8086/local/form/ajax_update_form.php?method=get_empty&page=';
+const where = document.querySelector('.local_form_properties');
+const APIURL = `${where.getAttribute('data-domen')}/local/form/ajax_update_form.php?page=`;
 const paramsUrl = document.querySelector('.local_form_properties') ? document.querySelector('.local_form_properties') : undefined;
 let dataUrl = paramsUrl ? paramsUrl.getAttribute('data-url') : undefined;
 let preloaderUrl = paramsUrl ? paramsUrl.getAttribute('data-preload') : undefined
@@ -31,11 +31,7 @@ const api = {
   preloaderUrl: preloaderUrl ? preloaderUrl : undefined,
   clearObject: {},
   getClearObject: ((step) => {
-    return fetch(`${APIURL_EMPTY + step}`, {
-      method: 'GET'
-    })
-      .then(res => res.json())
-      .then(res => api.clearObject = clone(res))
+    return false
   }),
   fetchData: (step = 0, before = () => { }) => {
     (typeof before === 'function') && before();
